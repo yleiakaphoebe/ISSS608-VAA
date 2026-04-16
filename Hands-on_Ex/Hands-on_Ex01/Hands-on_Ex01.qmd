@@ -1,12 +1,13 @@
 ---
 title: "Hands-on Exercise 1"
 author: "Lei Yuhe"
-
 execute:
   eval: true
   echo: true
   freeze: true
 ---
+
+# A Layered Grammar of Graphics: ggplot2 methods
 
 Getting Started 
 
@@ -17,6 +18,29 @@ pacman::p_load(tidyverse)
 ```{r}
 exam_data <- read_csv("data/Exam_data.csv")
 ```
+
+## Histogram of Maths Scores
+
+::: panel-tabset
+## R Graphics
+
+```{r}
+hist(exam_data$MATHS)
+```
+
+## ggplot2
+
+```{r}
+ggplot(exam_data, aes(x = MATHS)) +
+  geom_histogram(bins = 10, color = "black", fill = "lightgrey") +
+  labs(title = "Histogram of exam_data$MATHS",
+       x = "exam_data$MATHS",
+       y = "Frequency") +
+  theme_bw()
+```
+
+:::
+
 
 ```{r}
 ggplot(data = exam_data,
