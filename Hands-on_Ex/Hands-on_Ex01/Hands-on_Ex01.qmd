@@ -1,0 +1,29 @@
+---
+title: "Hands-on Exercise 1"
+author: "Lei Yuhe"
+
+execute:
+  eval: true
+  echo: true
+  freeze: true
+---
+
+Getting Started 
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = MATHS, fill = GENDER)) +
+  geom_histogram(bins = 20, color = "grey30")
+```
+
+
+
+
