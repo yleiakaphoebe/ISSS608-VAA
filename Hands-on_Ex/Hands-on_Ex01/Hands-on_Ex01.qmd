@@ -12,7 +12,9 @@ execute:
 
 # A Layered Grammar of Graphics: ggplot2 methods
 
-Getting Started 
+Getting Started
+
+Use [p_load()] function to install the collection of R packages under tidyverse.
 
 ```{r}
 pacman::p_load(tidyverse)
@@ -41,16 +43,10 @@ ggplot(exam_data, aes(x = MATHS)) +
        y = "Frequency") +
   theme_bw()
 ```
-
 :::
-
 
 ```{r}
 ggplot(data = exam_data,
        aes(x = MATHS, fill = GENDER)) +
   geom_histogram(bins = 20, color = "grey30")
 ```
-
-
-
-
