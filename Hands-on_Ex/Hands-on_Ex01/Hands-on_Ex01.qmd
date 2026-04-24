@@ -10,11 +10,9 @@ execute:
   freeze: true
 ---
 
-# A Layered Grammar of Graphics: ggplot2 methods
+## Getting Started with ggplot2
 
-Getting Started
-
-Use [p_load()] function to install the collection of R packages under tidyverse.
+Use ***p_load()*** function to install the collection of R packages under tidyverse, which will include the ggplot2, often used to create data-driven graphics based on **The Grammar of Graphics**. 
 
 ```{r}
 pacman::p_load(tidyverse)
@@ -23,17 +21,23 @@ pacman::p_load(tidyverse)
 ```{r}
 exam_data <- read_csv("data/Exam_data.csv")
 ```
+We got 322 rows of data with 7 attributes. 
+
+- The categorical attributes are: ID, CLASS, GENDER and RACE.
+- The continuous attributes are: MATHS, ENGLISH and SCIENCE.
 
 ## Histogram of Maths Scores
 
+Here, you can compare the difference between R Graphics, the core graphical function of Base R, and ggplot plotting a histogram. 
+
 ::: panel-tabset
-## R Graphics
+### R Graphics
 
 ```{r}
 hist(exam_data$MATHS)
 ```
 
-## ggplot2
+### ggplot2
 
 ```{r}
 ggplot(exam_data, aes(x = MATHS)) +
@@ -45,8 +49,21 @@ ggplot(exam_data, aes(x = MATHS)) +
 ```
 :::
 
-```{r}
-ggplot(data = exam_data,
-       aes(x = MATHS, fill = GENDER)) +
-  geom_histogram(bins = 20, color = "grey30")
-```
+As we can see, the difference is obvious. As quoted from [Hadley Wickham](http://varianceexplained.org/r/teach_ggplot2_to_beginners/#comment-1745406157): 
+
+> The transferable skills from ggplot2 are not the idiosyncrasies of plotting syntax, but a powerful way of thinking about visualisation, as a way of mapping between variables and the visual properties of geometric objects that you can perceive.
+
+## Grammar of Graphics
+The ***ggplot2*** follows a layered grammer of graphics, the 7 layers can be described as follow: 
+
+- **Data**: The dataset being plotted.
+- **Aesthetics**: It take attributes of the data and use them to influence visual characteristics, such as position, colours, size, shape, or transparency.
+- **Geometrics**: The visual elements used for our data, such as point, bar or line.
+- **Facets**: Split the data into subsets to create multiple variations of the same graph (paneling, multiple plots).
+- **Statistics**: Statiscal transformations that summarise data (e.g. mean, confidence intervals).
+- **Coordinate**: It defines the plane on which data are mapped on the graphic.
+- **Themes**: Modify all non-data components of a plot, such as main title, sub-title, y-aixs title, or legend background.
+
+
+## Reference
+- Prof. Kam Tin Seong [R for Visual Analytics](https://r4va.netlify.app/chap01#learning-outcome).

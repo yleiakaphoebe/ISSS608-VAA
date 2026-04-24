@@ -138,6 +138,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html">
  <span class="dropdown-text">Hands-on Exercise 1</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -166,10 +170,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#a-layered-grammar-of-graphics-ggplot2-methods" id="toc-a-layered-grammar-of-graphics-ggplot2-methods" class="nav-link active" data-scroll-target="#a-layered-grammar-of-graphics-ggplot2-methods">A Layered Grammar of Graphics: ggplot2 methods</a>
-  <ul class="collapse">
+  <li><a href="#getting-started-with-ggplot2" id="toc-getting-started-with-ggplot2" class="nav-link active" data-scroll-target="#getting-started-with-ggplot2">Getting Started with ggplot2</a></li>
   <li><a href="#histogram-of-maths-scores" id="toc-histogram-of-maths-scores" class="nav-link" data-scroll-target="#histogram-of-maths-scores">Histogram of Maths Scores</a></li>
-  </ul></li>
+  <li><a href="#grammar-of-graphics" id="toc-grammar-of-graphics" class="nav-link" data-scroll-target="#grammar-of-graphics">Grammar of Graphics</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
   </ul>
 </nav>
     </div>
@@ -202,7 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 18, 2026</p>
+      <p class="date-modified">April 24, 2026</p>
     </div>
   </div>
     
@@ -213,18 +217,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="a-layered-grammar-of-graphics-ggplot2-methods" class="level1">
-<h1>A Layered Grammar of Graphics: ggplot2 methods</h1>
-<p>Getting Started</p>
-<p>Use [p_load()] function to install the collection of R packages under tidyverse.</p>
+<section id="getting-started-with-ggplot2" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started-with-ggplot2">Getting Started with ggplot2</h2>
+<p>Use <strong><em>p_load()</em></strong> function to install the collection of R packages under tidyverse, which will include the ggplot2, often used to create data-driven graphics based on <strong>The Grammar of Graphics</strong>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>exam_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/Exam_data.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>We got 322 rows of data with 7 attributes.</p>
+<ul>
+<li>The categorical attributes are: ID, CLASS, GENDER and RACE.</li>
+<li>The continuous attributes are: MATHS, ENGLISH and SCIENCE.</li>
+</ul>
+</section>
 <section id="histogram-of-maths-scores" class="level2">
 <h2 class="anchored" data-anchor-id="histogram-of-maths-scores">Histogram of Maths Scores</h2>
+<p>Here, you can compare the difference between R Graphics, the core graphical function of Base R, and ggplot plotting a histogram.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R Graphics</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">ggplot2</a></li></ul>
 <div class="tab-content">
@@ -259,21 +269,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> exam_data,</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> MATHS, <span class="at">fill =</span> GENDER)) <span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">"grey30"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Hands-on_Ex01_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-
-
+<p>As we can see, the difference is obvious. As quoted from <a href="http://varianceexplained.org/r/teach_ggplot2_to_beginners/#comment-1745406157">Hadley Wickham</a>:</p>
+<blockquote class="blockquote">
+<p>The transferable skills from ggplot2 are not the idiosyncrasies of plotting syntax, but a powerful way of thinking about visualisation, as a way of mapping between variables and the visual properties of geometric objects that you can perceive.</p>
+</blockquote>
 </section>
+<section id="grammar-of-graphics" class="level2">
+<h2 class="anchored" data-anchor-id="grammar-of-graphics">Grammar of Graphics</h2>
+<p>The <strong><em>ggplot2</em></strong> follows a layered grammer of graphics, the 7 layers can be described as follow:</p>
+<ul>
+<li><strong>Data</strong>: The dataset being plotted.</li>
+<li><strong>Aesthetics</strong>: It take attributes of the data and use them to influence visual characteristics, such as position, colours, size, shape, or transparency.</li>
+<li><strong>Geometrics</strong>: The visual elements used for our data, such as point, bar or line.</li>
+<li><strong>Facets</strong>: Split the data into subsets to create multiple variations of the same graph (paneling, multiple plots).</li>
+<li><strong>Statistics</strong>: Statiscal transformations that summarise data (e.g.&nbsp;mean, confidence intervals).</li>
+<li><strong>Coordinate</strong>: It defines the plane on which data are mapped on the graphic.</li>
+<li><strong>Themes</strong>: Modify all non-data components of a plot, such as main title, sub-title, y-aixs title, or legend background.</li>
+</ul>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<ul>
+<li>Prof.&nbsp;Kam Tin Seong <a href="https://r4va.netlify.app/chap01#learning-outcome">R for Visual Analytics</a>.</li>
+</ul>
+
+
 </section>
 
 </main> <!-- /main -->
