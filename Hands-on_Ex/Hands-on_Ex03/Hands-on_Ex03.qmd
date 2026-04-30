@@ -1,0 +1,623 @@
+---
+title: "Hands-on Exercise 3"
+author: "Lei Yuhe"
+date: "April 27, 2026"
+date-modified: "last-modified"
+execute:
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# Overview
+
+This chapter introduces **interactive data visualization in R**, covering three major approaches:
+
+1.  **`ggiraph`**: makes ggplot2 graphics interactive (tooltips, hover, click)
+2.  **`plotly`**: rich interactive charts via `plot_ly()` and `ggplotly()`
+3.  **`crosstalk`**: linked brushing and filtering across multiple widgets
+
+We apply these techniques to the **Superstore sales dataset**, a transactional retail dataset covering orders from 2022–2025 across the United States, with fields for customer segment, product category, region, sales, discount, and profit.
+
+# Getting Started
+
+## Load Packages
+
+```{r}
+#| label: setup
+pacman::p_load(
+  ggiraph,      # interactive ggplot2
+  plotly,       # plotly interactive charts
+  DT,           # interactive data tables
+  crosstalk,    # linked brushing
+  patchwork,    # multi-panel layouts
+  tidyverse,    # data wrangling + ggplot2
+  scales        # number formatting helpers
+)
+```
+
+::: callout-note
+`pacman::p_load()` checks if packages are installed and install them if missing. Comparing to `library()`, this looks cleaner. 
+:::
+
+## Import the Superstore Dataset
+
+```{r}
+#| label: import-data
+
+library(readxl)
+superstore <- read_excel("data/Superstore.xls") |>
+  mutate(
+    `Order Date`  = as.Date(`Order Date`),
+    `Ship Date`   = as.Date(`Ship Date`),
+    Year          = year(`Order Date`),
+    Month         = month(`Order Date`, label = TRUE),
+    ProfitMargin  = Profit / Sales
+  )
+
+glimpse(superstore)
+```
+
+The dataset contains **`r nrow(superstore)` rows** and **`r ncol(superstore)` columns**, spanning orders from `r min(superstore[["Order Date"]])` to `r max(superstore[["Order Date"]])`.
+
+Key variables we are using:
+
+| Variable       | Type      | Description                              |
+|----------------|-----------|------------------------------------------|
+| `Sales`        | Numeric   | Revenue per order line                   |
+| `Profit`       | Numeric   | Net profit per order line                |
+| `Discount`     | Numeric   | Discount rate applied (0–1)              |
+| `Category`     | Character | Furniture / Office Supplies / Technology |
+| `Sub-Category` | Character | 17 product sub-types                     |
+| `Segment`      | Character | Consumer / Corporate / Home Office       |
+| `Region`       | Character | Central / East / South / West            |
+| `Ship Mode`    | Character | Shipping speed tier                      |
+
+# Interactive Visualization with `ggiraph`
+
+`ggiraph` extends ggplot2 by allowing three interactive aesthetics on any `_interactive()` geom:
+
+| Aesthetic | Effect                                        |
+|-----------|-----------------------------------------------|
+| `tooltip` | Pop-up text on mouse hover                    |
+| `data_id` | Highlight linked elements sharing the same ID |
+| `onclick` | Execute JavaScript when element is clicked    |
+
+The workflow is a two-step procedure: 
+1. Build a ggplot using `geom_*_interactive()` instead of the usual `geom_*()` 
+2. Wrap the plot in `girafe()` to render it as an SVG HTML widget
+
+## Tooltip: Profit Margin by Sub-Category
+
+We start with a simple bar chart showing average profit margin per sub-category, with a rich tooltip revealing the full picture.
+
+```{r}
+#| label: ggiraph-tooltip
+
+# Summarise by sub-category
+subcat_summary <- superstore |>  # |> is the pipe operator, which takes the output of one expression and passes it as the first argument to the next function.
+  group_by(`Sub-Category`, Category) |>
+  summarise(
+    TotalSales   = sum(Sales),
+    TotalProfit  = sum(Profit),
+    AvgMargin    = mean(ProfitMargin),
+    .groups = "drop"
+  ) |>
+  mutate(
+    tooltip_text = paste0(
+      "<b>", `Sub-Category`, "</b><br>",
+      "Category: ", Category, "<br>",
+      "Total Sales: $", scales::comma(round(TotalSales, 0)), "<br>",
+      "Total Profit: $", scales::comma(round(TotalProfit, 0)), "<br>",
+      "Avg Margin: ", scales::percent(AvgMargin, accuracy = 0.1)
+    ),
+    fill_colour = case_when(
+      AvgMargin >  0.15 ~ "High",
+      AvgMargin >  0    ~ "Positive",
+      TRUE              ~ "Loss-making"
+    )
+  )
+
+p_bar <- ggplot(subcat_summary,
+                aes(x = reorder(`Sub-Category`, AvgMargin),
+                    y = AvgMargin,
+                    fill = fill_colour)) +
+  geom_col_interactive(
+    aes(tooltip = tooltip_text,
+        data_id = `Sub-Category`),
+    width = 0.7
+  ) +
+  geom_hline(yintercept = 0, colour = "grey30", linewidth = 0.4) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_fill_manual(
+    values = c("High" = "#2196F3", "Positive" = "#81C784", "Loss-making" = "#E57373"),
+    name = "Margin tier"
+  ) +
+  coord_flip() +
+  labs(
+    title    = "Average Profit Margin by Sub-Category",
+    subtitle = "Hover for sales and profit details",
+    x = NULL, y = "Average Profit Margin"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "top")
+
+girafe(
+  ggobj       = p_bar,
+  width_svg   = 8,
+  height_svg  = 8 * 0.75
+)
+```
+
+::: callout-important
+### Takeaway: Tables and Bookcases are destroying margins
+
+`Tables` and `Bookcases` both have **negative average profit margins**, every sale in these sub-categories on average loses money. `Paper`, by contrast, have the highest profit margin, even if the total sales/revenue is not as high as `Tables` and `Bookcases`.
+:::
+
+## Customizing Tooltip Style
+
+We can inject CSS into the tooltip via `opts_tooltip(css = ...)` inside `girafe(options = list(...))`.
+
+```{r}
+#| label: ggiraph-tooltip-css
+
+tooltip_css <- "
+  background-color: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  border: 1px solid #4fc3f7;
+"
+
+region_seg <- superstore |>
+  group_by(Region, Segment) |>
+  summarise(
+    Sales  = sum(Sales),
+    Profit = sum(Profit),
+    .groups = "drop"
+  ) |>
+  mutate(
+    tooltip_text = paste0(
+      "Region: ", Region, "\n",
+      "Segment: ", Segment, "\n",
+      "Sales: $", scales::comma(round(Sales, 0)), "\n",
+      "Profit: $", scales::comma(round(Profit, 0))
+    )
+  )
+
+p_heat <- ggplot(region_seg, aes(x = Region, y = Segment, fill = Profit)) +
+  geom_tile_interactive(
+    aes(tooltip = tooltip_text, data_id = paste(Region, Segment)),
+    colour = "white", linewidth = 0.8
+  ) +
+  scale_fill_gradient2(
+    low     = "#d32f2f",
+    mid     = "#fff9c4",
+    high    = "#388e3c",
+    midpoint = 0,
+    labels  = dollar_format(scale = 1e-3, suffix = "K")
+  ) +
+  labs(
+    title    = "Profit Heatmap: Region × Customer Segment",
+    subtitle = "Hover to see exact figures",
+    fill     = "Total Profit",
+    x = NULL, y = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(axis.text = element_text(size = 12))
+
+girafe(
+  ggobj      = p_heat,
+  width_svg  = 7,
+  height_svg = 7 * 0.6,
+  options    = list(
+    opts_tooltip(css = tooltip_css, opacity = 0.95)
+  )
+)
+```
+
+::: callout-note
+The West region is the most consistently profitable across all three segments. The Central region Consumer segment is the weakest performer proportionally despite high order volume.
+:::
+
+## Hover Effect with `data_id`
+
+`data_id` let us highlight all elements that share the same group. When we hover over one bar, all bars in the same category light up together, which can be very useful for comparing within-group behaviour.
+
+```{r}
+#| label: ggiraph-data-id
+
+subcatplot <- superstore |>
+  group_by(Category, `Sub-Category`) |>
+  summarise(TotalSales = sum(Sales), .groups = "drop")
+
+p_grouped <- ggplot(subcatplot,
+                    aes(x = reorder(`Sub-Category`, TotalSales),
+                        y = TotalSales,
+                        fill = Category)) +
+  geom_col_interactive(
+    aes(tooltip  = paste0(`Sub-Category`, ": $", scales::comma(round(TotalSales, 0))),
+        data_id  = Category),
+    width = 0.75
+  ) +
+  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = "K")) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() +
+  labs(
+    title    = "Total Sales by Sub-Category",
+    subtitle = "Hover to highlight all sub-categories within the same product category",
+    x = NULL, y = "Total Sales",
+    fill = "Category"
+  ) +
+  theme_minimal(base_size = 12)
+
+girafe(
+  ggobj      = p_grouped,
+  width_svg  = 8,
+  height_svg = 8 * 0.75,
+  options    = list(
+    opts_hover(css     = "fill-opacity: 1; stroke: #333; stroke-width: 1.5px;"),
+    opts_hover_inv(css = "opacity: 0.15;")
+  )
+)
+```
+
+::: callout-tip
+### How `opts_hover_inv` works
+
+`opts_hover_inv` controls the opacity of **non-hovered** elements. Setting `opacity: 0.15` makes everything else fade out, directing attention to the hovered group.
+:::
+
+## Coordinated Multiple Views with `ggiraph`
+
+Another highligting feature of `ggiraph` is by assigning the same `data_id` (e.g. `Sub-Category`) to elements in two side-by-side plots, hovering in one automatically highlights the corresponding point in the other.
+
+```{r}
+#| label: ggiraph-coordinated
+
+sc <- superstore |>
+  group_by(`Sub-Category`, Category) |>
+  summarise(
+    TotalSales  = sum(Sales),
+    TotalProfit = sum(Profit),
+    AvgDiscount = mean(Discount),
+    .groups     = "drop"
+  )
+
+p_left <- ggplot(sc, aes(x = reorder(`Sub-Category`, TotalSales), y = TotalSales, fill = Category)) +
+  geom_col_interactive(
+    aes(tooltip = paste0(`Sub-Category`, "\nSales: $", scales::comma(round(TotalSales))),
+        data_id = `Sub-Category`),
+    width = 0.7
+  ) +
+  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = "K")) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() +
+  labs(title = "Total Sales", 
+       subtitle = "Linked views: hover on a sub-category in either plot to highlight it in both.",
+       x = NULL, y = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(legend.position = "none")
+
+p_right <- ggplot(sc, aes(x = reorder(`Sub-Category`, TotalSales), y = TotalProfit, fill = Category)) +
+  geom_col_interactive(
+    aes(tooltip = paste0(`Sub-Category`, "\nProfit: $", scales::comma(round(TotalProfit))),
+        data_id = `Sub-Category`),
+    width = 0.7
+  ) +
+  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = "K")) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() +
+  labs(title = "Total Profit", x = NULL, y = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(
+    axis.text.y  = element_blank(),
+    legend.position = "none"
+  )
+
+girafe(
+  code       = print(p_left + p_right),
+  width_svg  = 10,
+  height_svg = 5,
+  options    = list(
+    opts_hover(css     = "fill-opacity:1; stroke:#333; stroke-width:1.5px;"),
+    opts_hover_inv(css = "opacity:0.1;")
+  )
+)
+```
+
+::: callout-important
+### Takeaway: The Sales ≠ Profit trap
+
+Chairs (#1 in sales) and Tables (#4) look similar on the left but differs largely on the right. Tables actually **lose money** at scale. Coordinated views make this contrast instantly visible in a way a single chart cannot.
+:::
+
+# Interactive Visualization with `plotly`
+
+`plotly` offers richer interactivity out of the box — zoom, pan, toggle series, and download as PNG. There are two entry points:
+
+-   `plot_ly()`: native plotly API, more control
+-   `ggplotly()`: wrap any ggplot2 object, fastest path
+
+## `plot_ly()`: Sales vs Profit Scatter
+
+```{r}
+#| label: plotly-scatter-plotly
+#| fig-cap: "Click legend items to show/hide segments. Hover for details."
+
+order_summary <- superstore |>
+  group_by(`Order ID`, Segment, Category) |>
+  summarise(
+    Sales   = sum(Sales),
+    Profit  = sum(Profit),
+    .groups = "drop"
+  )
+
+plot_ly(
+  data   = order_summary,
+  x      = ~Sales,
+  y      = ~Profit,
+  color  = ~Segment,
+  symbol = ~Category,
+  type   = "scatter",
+  mode   = "markers",
+  marker = list(size = 5, opacity = 0.6),
+  text   = ~paste0("Segment: ", Segment,
+                   "<br>Category: ", Category,
+                   "<br>Sales: $", round(Sales, 2),
+                   "<br>Profit: $", round(Profit, 2)),
+  hoverinfo = "text"
+) |>
+  layout(
+    title  = "Order-Level Sales vs Profit by Segment and Category",
+    xaxis  = list(title = "Order Sales ($)", type = "log"),
+    yaxis  = list(title = "Order Profit ($)"),
+    legend = list(title = list(text = "Segment"))
+  )
+```
+
+::: callout-note
+The log scale on the x-axis is intentional, due to the span on the sales amount. On a linear scale, most points would crowd into the left corner, distorting the patterns.
+:::
+
+## `ggplotly()`: Monthly Sales Trend
+
+Writing a normal ggplot, then wrap it in `ggplotly()` to get hover tooltips, zoom, and pan.
+
+```{r}
+#| label: plotly-ggplotly
+#| fig-cap: "Hover over a point to see exact monthly figures. Use the legend to toggle categories."
+
+monthly <- superstore |>
+  group_by(Year, Month, Category) |>
+  summarise(Sales = sum(Sales), .groups = "drop") |>
+  mutate(YearMonth = paste(Year, Month, sep = "-"))
+
+p_trend <- ggplot(monthly,
+                  aes(x = Month, y = Sales, colour = Category, group = interaction(Year, Category),
+                      text = paste0(Month, " ", Year,
+                                    "<br>Category: ", Category,
+                                    "<br>Sales: $", scales::comma(round(Sales))))) +
+  geom_line(alpha = 0.5) +
+  geom_point(size = 2) +
+  facet_wrap(~Year, ncol = 2) +
+  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = "K")) +
+  scale_colour_brewer(palette = "Set1") +
+  labs(
+    title    = "Monthly Sales Trend by Category and Year",
+    x        = NULL,
+    y        = "Monthly Sales",
+    colour   = "Category"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplotly(p_trend, tooltip = "text")
+```
+
+::: callout-tip
+### When to use `ggplotly()` vs `plot_ly()`
+
+Use `ggplotly()` when we already have a ggplot2 plot and just want interactivity quickly. Use `plot_ly()` when we need fine-grained control over plotly-specific features like 3D plots, animations, or custom hover templates.
+:::
+
+## Coordinated Multiple Views with `plotly`
+
+Use `highlight_key()` to create a shared data object, build two separate plots, then can link them with `subplot()`. Clicking a point in one panel highlights the corresponding points in the other.
+
+```{r}
+#| label: plotly-coordinated
+#| fig-cap: "Click any point to highlight the same order across both panels."
+
+order_view <- superstore |>
+  group_by(`Order ID`, Segment, Region) |>
+  summarise(
+    Sales    = sum(Sales),
+    Profit   = sum(Profit),
+    Discount = mean(Discount),
+    .groups  = "drop"
+  )
+
+d_shared <- highlight_key(order_view)
+
+p1 <- ggplot(d_shared, aes(x = Sales, y = Profit, colour = Segment,
+                            text = paste0("Order: ", `Order ID`,
+                                          "<br>Segment: ", Segment,
+                                          "<br>Sales: $", round(Sales),
+                                          "<br>Profit: $", round(Profit)))) +
+  geom_point(size = 1.5, alpha = 0.5) +
+  scale_x_log10(labels = dollar_format()) +
+  scale_colour_brewer(palette = "Set2") +
+  labs(title = "Sales vs Profit", x = "Sales (log)", y = "Profit") +
+  theme_minimal(base_size = 10)
+
+p2 <- ggplot(d_shared, aes(x = Discount, y = Profit, colour = Segment,
+                            text = paste0("Order: ", `Order ID`,
+                                          "<br>Discount: ", percent(Discount),
+                                          "<br>Profit: $", round(Profit)))) +
+  geom_point(size = 1.5, alpha = 0.5) +
+  scale_x_continuous(labels = percent_format()) +
+  scale_colour_brewer(palette = "Set2") +
+  labs(title = "Discount vs Profit", x = "Discount Rate", y = "Profit") +
+  theme_minimal(base_size = 10)
+
+subplot(
+  ggplotly(p1, tooltip = "text"),
+  ggplotly(p2, tooltip = "text"),
+  nrows          = 1,
+  shareY         = TRUE,
+  titleX         = TRUE
+) |>
+  highlight(on = "plotly_click", off = "plotly_deselect") |>
+  layout(title = "Coordinated View: Sales vs Profit & Discount vs Profit")
+```
+
+::: callout-important
+### Takeaway: Discounts beyond 40% are almost universally unprofitable
+
+The right panel (`Discount vs Profit`) tells that orders with discounts above 40% are generally non-profitable. This is a structural pricing problem.
+:::
+
+------------------------------------------------------------------------
+
+# Interactive Data Table + Linked Brushing with `crosstalk`
+
+`crosstalk` enables cross-widget interactions between htmlwidgets **without Shiny**, i.e., they work in static HTML documents.
+
+## Interactive Data Table with `DT`
+
+```{r}
+#| label: dt-table
+#| fig-cap: "Search, sort, and page through the full order dataset."
+
+superstore |>
+  select(`Order ID`, `Order Date`, Segment, Region, Category,
+         `Sub-Category`, Sales, Discount, Profit) |>
+  mutate(
+    Sales    = round(Sales, 2),
+    Profit   = round(Profit, 2),
+    Discount = percent(Discount, accuracy = 1)
+  ) |>
+  DT::datatable(
+    class      = "compact stripe hover",
+    rownames   = FALSE,
+    filter     = "top",
+    extensions = "Buttons",
+    options    = list(
+      pageLength = 10,
+      dom        = "Bfrtip",
+      buttons    = c("csv", "excel")
+    )
+  ) |>
+  DT::formatCurrency(c("Sales", "Profit"), currency = "$", digits = 2) |>
+  DT::formatStyle(
+    "Profit",
+    color = DT::styleInterval(0, c("#d32f2f", "#388e3c"))
+  )
+```
+
+::: callout-tip
+The `filter = "top"` option adds per-column filter boxes, which is powerful for ad hoc slicing without writing any code. The `Buttons` extension adds CSV / Excel export.
+:::
+
+------------------------------------------------------------------------
+
+## Linked Brushing: Scatter + Table
+
+The final pattern is the most powerful: select points on the scatter, and the table below automatically filters to show only those rows.
+
+```{r}
+#| label: crosstalk-brushing
+#| fig-cap: "Drag to select a region on the scatter plot — the table updates to match."
+
+brush_data <- superstore |>
+  select(`Order ID`, `Customer Name`, Segment, Region, Category,
+         `Sub-Category`, Sales, Discount, Profit) |>
+  mutate(
+    Sales    = round(Sales, 2),
+    Profit   = round(Profit, 2)
+  )
+
+d_brush <- highlight_key(brush_data)
+
+scatter <- ggplot(d_brush, aes(x = Sales, y = Profit,
+                                colour = Category,
+                                text   = paste0(`Sub-Category`,
+                                                "<br>", `Customer Name`,
+                                                "<br>$", Sales, " / $", Profit))) +
+  geom_point(alpha = 0.5, size = 1.5) +
+  scale_x_log10(labels = dollar_format()) +
+  scale_colour_brewer(palette = "Set1") +
+  labs(
+    title  = "Click or drag to select — table below updates automatically",
+    x      = "Sales (log scale)",
+    y      = "Profit ($)"
+  ) +
+  theme_minimal(base_size = 11)
+
+gg_scatter <- highlight(
+  ggplotly(scatter, tooltip = "text"),
+  on  = "plotly_selected",
+  off = "plotly_deselect"
+)
+
+crosstalk::bscols(
+  widths = c(12),
+  gg_scatter,
+  DT::datatable(
+    d_brush,
+    class    = "compact",
+    rownames = FALSE,
+    options  = list(pageLength = 8, scrollX = TRUE)
+  ) |>
+    DT::formatCurrency(c("Sales", "Profit"))
+)
+```
+
+::: callout-note
+### How crosstalk works under the hood
+
+*highlight()* is a function of **plotly** package. It sets a variety of options for brushing (i.e., highlighting) multiple plots. These options are primarily designed for linking multiple plotly graphs, and may not behave as expected when linking plotly to another htmlwidget package via crosstalk. In some cases, other htmlwidgets will respect these options, such as persistent selection in leaflet.
+:::
+
+------------------------------------------------------------------------
+
+# Summary of Takeaways
+
+## Methodological Lessons
+
+| Concept | Key Point |
+|------------------------------------|------------------------------------|
+| `geom_*_interactive()` | Drop-in replacement for ggplot2 geoms; tooltip/data_id/onclick are the three hooks |
+| `girafe()` | Finalises the SVG widget; `opts_tooltip()`, `opts_hover()`, `opts_hover_inv()` control styling |
+| `data_id` | The bridge for coordinated views in ggiraph, using the same column in both plots |
+| `ggplotly()` | Fastest path to interactivity, passing `tooltip = "text"` for custom hover text |
+| `highlight_key()` | Shared data pointer, binding multiple widgets to it for linked brushing without Shiny |
+| `subplot()` | Places plotly charts side-by-side with optional shared axes |
+| `DT::datatable()` | Powerful for exploration; `filter = "top"` and `Buttons` extension are useful |
+
+## Business Insights from the Superstore Data
+
+1.  **Tables and Bookcases are money-losers.** Despite Table's ranking as the 4th highest revenue sub-category, it runs at a **negative average profit margin**. Discounting in Furniture is likely the culprit.
+
+2.  **Discounts over 40% are almost never profitable.** The discount–profit scatter shows a clear inflection point around 40%. Any discount above that level correlates strongly with negative profit.
+
+3.  **Technology has the best margin quality.** Despite not being the top revenue category, Technology generates the highest total profit, where it was driven by Copiers and Accessories, both of which have strong positive margins.
+
+4.  **The West region leads profitability** across all three customer segments. The Central region is the most volatile.
+
+5.  **Sales volume alone is a misleading KPI.** Chairs are the #1 sub-category by revenue but sit in the middle of profit rankings. Any sales dashboard that shows only revenue is hiding the costs. 
+
+------------------------------------------------------------------------
+
+# References
+
+-   [ggiraph documentation](https://davidgohel.github.io/ggiraph/)
+-   *Interactive web-based data visualization with R, plotly, and shiny*. Chapman & Hall/CRC. [Online version](https://plotly-r.com/)
+-   [crosstalk documentation](https://rstudio.github.io/crosstalk/)
+-   [DT: R Interface to the DataTables library](https://rstudio.github.io/DT/)
+-   *R for Visual Analytics*, Chapter 3. [r4va.netlify.app/chap03](https://r4va.netlify.app/chap03)

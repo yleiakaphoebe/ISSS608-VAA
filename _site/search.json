@@ -7,6 +7,76 @@
     "text": "Welcome to ISSS608 Visual Analytics and Applications. In this website, you will find my coursework prepared for this course."
   },
   {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "title": "Hands-on Exercise 2",
+    "section": "",
+    "text": "Beside tidyverse, four R packages will be used. Here is a table for the packages, their purpose and primary functions:\n\n\n\n\n\n\n\n\nPackage\nPurpose\nPrimary Functions\n\n\n\n\nggrepel\nRepel overlapping text and label geoms\ngeom_text_repel(), geom_label_repel()\n\n\npatchwork\nCompose multiple ggplots into a single figure\n+, /, \\|, plot_layout(), plot_annotation()\n\n\nggthemes\nExtra themes inspired by news and science outlets\ntheme_economist(), theme_wsj(), theme_tufte()\n\n\nhrbrthemes\nTypography-centric, publication-ready themes\ntheme_ipsum(), theme_ipsum_rc(), theme_modern_rc()\n\n\ntidyverse\nCore data wrangling and ggplot2 visualisation\nggplot(), dplyr, tidyr, readr\n\n\n\nCheck the installation:\n\npacman::p_load(ggrepel, patchwork, \n               ggthemes, hrbrthemes,\n               tidyverse) \n\nImport the data:\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-fundamentals",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-fundamentals",
+    "title": "Hands-on Exercise 2",
+    "section": "",
+    "text": "Beside tidyverse, four R packages will be used. Here is a table for the packages, their purpose and primary functions:\n\n\n\n\n\n\n\n\nPackage\nPurpose\nPrimary Functions\n\n\n\n\nggrepel\nRepel overlapping text and label geoms\ngeom_text_repel(), geom_label_repel()\n\n\npatchwork\nCompose multiple ggplots into a single figure\n+, /, \\|, plot_layout(), plot_annotation()\n\n\nggthemes\nExtra themes inspired by news and science outlets\ntheme_economist(), theme_wsj(), theme_tufte()\n\n\nhrbrthemes\nTypography-centric, publication-ready themes\ntheme_ipsum(), theme_ipsum_rc(), theme_modern_rc()\n\n\ntidyverse\nCore data wrangling and ggplot2 visualisation\nggplot(), dplyr, tidyr, readr\n\n\n\nCheck the installation:\n\npacman::p_load(ggrepel, patchwork, \n               ggthemes, hrbrthemes,\n               tidyverse) \n\nImport the data:\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-annotation-ggrepel",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-annotation-ggrepel",
+    "title": "Hands-on Exercise 2",
+    "section": "Beyond ggplot2 Annotation: ggrepel",
+    "text": "Beyond ggplot2 Annotation: ggrepel\nOne of the challenge in plotting statistical graph is annotation, especially with large number of data points.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm,\n              size = 0.5) +\n  geom_label(aes(label = ID),\n             hjust = .5,\n             vjust = -.5) +\n  coord_cartesian(xlim = c(0, 100),\n                  ylim = c(0, 100)) +\n  ggtitle(\"English scores versus Maths scores for Primary 3\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggrepel",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggrepel",
+    "title": "Hands-on Exercise 2",
+    "section": "Working with ggrepel",
+    "text": "Working with ggrepel\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm,\n              size = 0.5) +\n  geom_label_repel(aes(label = ID),\n                   fontface = \"bold\") +\n  coord_cartesian(xlim = c(0, 100),\n                  ylim = c(0, 100)) +\n  ggtitle(\"English scores versus Maths scores for Primary 3\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplots-themes-ggthemes-hrbrthemes",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplots-themes-ggthemes-hrbrthemes",
+    "title": "Hands-on Exercise 2",
+    "section": "Beyond ggplots Themes: ggthemes & hrbrthemes",
+    "text": "Beyond ggplots Themes: ggthemes & hrbrthemes\nggplot2 comes with eight built-in themes, they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20,\n                 boundary = 100,\n                 color = \"grey25\",\n                 fill = \"grey90\") +\n  theme_gray() +\n  ggtitle(\"Distribution of Maths scores\")\n\n\n\nRefer to this link to learn more about ggplot2 Themes"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggtheme",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggtheme",
+    "title": "Hands-on Exercise 2",
+    "section": "Working with ggtheme",
+    "text": "Working with ggtheme\nggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.\nIn the example below, The Economist theme is used.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20,\n                 boundary = 100,\n                 color = \"grey25\",\n                 fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores\") +\n  theme_economist()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-hrbrthemes",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-hrbrthemes",
+    "title": "Hands-on Exercise 2",
+    "section": "Working with hrbrthemes",
+    "text": "Working with hrbrthemes\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20,\n                 boundary = 100,\n                 color = \"grey25\",\n                 fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores\") +\n  theme_ipsum(axis_title_size = 18,\n              base_size = 15,\n              grid = \"Y\")\n\n\n\n\n\n\n\n\n\nTipWhat can we learn from the code chunk above?\n\n\n\n\naxis_title_size argument is used to increase the font size of the axis title to 18,\nbase_size argument is used to increase the default axis label to 15, and\ngrid argument is used to remove the x-axis grid lines."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-single-graph",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-single-graph",
+    "title": "Hands-on Exercise 2",
+    "section": "Beyond Single Graph",
+    "text": "Beyond Single Graph\nPlotting below 3 single graphs for composition.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\np1 &lt;- ggplot(data=exam_data, \n             aes(x = MATHS)) +\n  geom_histogram(bins=20, \n                 boundary = 100,\n                 color=\"grey25\", \n                 fill=\"grey90\") + \n  coord_cartesian(xlim=c(0,100)) +\n  ggtitle(\"Distribution of Maths scores\")\n\n\n\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\np2 &lt;- ggplot(data=exam_data, \n             aes(x = ENGLISH)) +\n  geom_histogram(bins=20, \n                 boundary = 100,\n                 color=\"grey25\", \n                 fill=\"grey90\") +\n  coord_cartesian(xlim=c(0,100)) +\n  ggtitle(\"Distribution of English scores\")\n\n\n\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\np3 &lt;- ggplot(data=exam_data, \n             aes(x= MATHS, \n                 y=ENGLISH)) +\n  geom_point() +\n  geom_smooth(method=lm, \n              size=0.5) +  \n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100)) +\n  ggtitle(\"English scores versus Maths scores for Primary 3\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-composite-graphics-pathwork-methods",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-composite-graphics-pathwork-methods",
+    "title": "Hands-on Exercise 2",
+    "section": "Creating Composite Graphics: pathwork methods",
+    "text": "Creating Composite Graphics: pathwork methods\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n(p1 / p2) | p3"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
     "title": "Hands-on Exercise 1",
@@ -28,13 +98,6 @@
     "text": "Histogram of Maths Scores\nHere, you can compare the difference between R Graphics, the core graphical function of Base R, and ggplot plotting a histogram.\n\nR Graphicsggplot2\n\n\n\nhist(exam_data$MATHS)\n\n\n\n\n\n\n\n\n\n\n\nggplot(exam_data, aes(x = MATHS)) +\n  geom_histogram(bins = 10, color = \"black\", fill = \"lightgrey\") +\n  labs(title = \"Histogram of exam_data$MATHS\",\n       x = \"exam_data$MATHS\",\n       y = \"Frequency\") +\n  theme_bw()\n\n\n\n\n\n\n\n\n\n\n\nAs we can see, the difference is obvious. As quoted from Hadley Wickham:\n\nThe transferable skills from ggplot2 are not the idiosyncrasies of plotting syntax, but a powerful way of thinking about visualisation, as a way of mapping between variables and the visual properties of geometric objects that you can perceive."
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
-  },
-  {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#grammar-of-graphics",
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#grammar-of-graphics",
     "title": "Hands-on Exercise 1",
@@ -49,94 +112,101 @@
     "text": "Reference\n\nProf. Kam Tin Seong R for Visual Analytics."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
-    "title": "Hands-on Exercise 2",
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html",
+    "title": "Hands-on Exercise 3",
     "section": "",
-    "text": "Beside tidyverse, four R packages will be used. Here is a table for the packages, their purpose and primary functions:\n\n\n\n\n\n\n\n\nPackage\nPurpose\nPrimary Functions\n\n\n\n\nggrepel\nRepel overlapping text and label geoms\ngeom_text_repel(), geom_label_repel()\n\n\npatchwork\nCompose multiple ggplots into a single figure\n+, /, \\|, plot_layout(), plot_annotation()\n\n\nggthemes\nExtra themes inspired by news and science outlets\ntheme_economist(), theme_wsj(), theme_tufte()\n\n\nhrbrthemes\nTypography-centric, publication-ready themes\ntheme_ipsum(), theme_ipsum_rc(), theme_modern_rc()\n\n\ntidyverse\nCore data wrangling and ggplot2 visualisation\nggplot(), dplyr, tidyr, readr\n\n\n\nCheck the installation:\n\npacman::p_load(ggrepel, patchwork, \n               ggthemes, hrbrthemes,\n               tidyverse) \n\nImport the data:\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+    "text": "This chapter introduces interactive data visualization in R, covering three major approaches:\n\nggiraph: makes ggplot2 graphics interactive (tooltips, hover, click)\nplotly: rich interactive charts via plot_ly() and ggplotly()\ncrosstalk: linked brushing and filtering across multiple widgets\n\nWe apply these techniques to the Superstore sales dataset, a transactional retail dataset covering orders from 2022–2025 across the United States, with fields for customer segment, product category, region, sales, discount, and profit."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-fundamentals",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-fundamentals",
-    "title": "Hands-on Exercise 2",
-    "section": "",
-    "text": "Beside tidyverse, four R packages will be used. Here is a table for the packages, their purpose and primary functions:\n\n\n\n\n\n\n\n\nPackage\nPurpose\nPrimary Functions\n\n\n\n\nggrepel\nRepel overlapping text and label geoms\ngeom_text_repel(), geom_label_repel()\n\n\npatchwork\nCompose multiple ggplots into a single figure\n+, /, \\|, plot_layout(), plot_annotation()\n\n\nggthemes\nExtra themes inspired by news and science outlets\ntheme_economist(), theme_wsj(), theme_tufte()\n\n\nhrbrthemes\nTypography-centric, publication-ready themes\ntheme_ipsum(), theme_ipsum_rc(), theme_modern_rc()\n\n\ntidyverse\nCore data wrangling and ggplot2 visualisation\nggplot(), dplyr, tidyr, readr\n\n\n\nCheck the installation:\n\npacman::p_load(ggrepel, patchwork, \n               ggthemes, hrbrthemes,\n               tidyverse) \n\nImport the data:\n\nexam_data &lt;- read_csv(\"data/Exam_data.csv\")"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#load-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#load-packages",
+    "title": "Hands-on Exercise 3",
+    "section": "Load Packages",
+    "text": "Load Packages\n\npacman::p_load(\n  ggiraph,      # interactive ggplot2\n  plotly,       # plotly interactive charts\n  DT,           # interactive data tables\n  crosstalk,    # linked brushing\n  patchwork,    # multi-panel layouts\n  tidyverse,    # data wrangling + ggplot2\n  scales        # number formatting helpers\n)\n\n\n\n\n\n\n\nNote\n\n\n\npacman::p_load() checks if packages are installed and install them if missing. Comparing to library(), this looks cleaner."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-ggrepel",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-ggrepel",
-    "title": "Hands-on Exercise 2",
-    "section": "Beyond ggplot2: ggrepel",
-    "text": "Beyond ggplot2: ggrepel\nOne of the challenge in plotting statistical graph is annotation, especially with large number of data points.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm,\n              size = 0.5) +\n  geom_label(aes(label = ID),\n             hjust = .5,\n             vjust = -.5) +\n  coord_cartesian(xlim = c(0, 100),\n                  ylim = c(0, 100)) +\n  ggtitle(\"English scores versus Maths scores for Primary 3\")"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#import-the-superstore-dataset",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#import-the-superstore-dataset",
+    "title": "Hands-on Exercise 3",
+    "section": "Import the Superstore Dataset",
+    "text": "Import the Superstore Dataset\n\nlibrary(readxl)\nsuperstore &lt;- read_excel(\"data/Superstore.xls\") |&gt;\n  mutate(\n    `Order Date`  = as.Date(`Order Date`),\n    `Ship Date`   = as.Date(`Ship Date`),\n    Year          = year(`Order Date`),\n    Month         = month(`Order Date`, label = TRUE),\n    ProfitMargin  = Profit / Sales\n  )\n\nglimpse(superstore)\n\nRows: 10,194\nColumns: 24\n$ `Row ID`         &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16…\n$ `Order ID`       &lt;chr&gt; \"US-2022-103800\", \"US-2022-112326\", \"US-2022-112326\",…\n$ `Order Date`     &lt;date&gt; 2022-01-03, 2022-01-04, 2022-01-04, 2022-01-04, 2022…\n$ `Ship Date`      &lt;date&gt; 2022-01-07, 2022-01-08, 2022-01-08, 2022-01-08, 2022…\n$ `Ship Mode`      &lt;chr&gt; \"Standard Class\", \"Standard Class\", \"Standard Class\",…\n$ `Customer ID`    &lt;chr&gt; \"DP-13000\", \"PO-19195\", \"PO-19195\", \"PO-19195\", \"MB-1…\n$ `Customer Name`  &lt;chr&gt; \"Darren Powers\", \"Phillina Ober\", \"Phillina Ober\", \"P…\n$ Segment          &lt;chr&gt; \"Consumer\", \"Home Office\", \"Home Office\", \"Home Offic…\n$ `Country/Region` &lt;chr&gt; \"United States\", \"United States\", \"United States\", \"U…\n$ City             &lt;chr&gt; \"Houston\", \"Naperville\", \"Naperville\", \"Naperville\", …\n$ `State/Province` &lt;chr&gt; \"Texas\", \"Illinois\", \"Illinois\", \"Illinois\", \"Pennsyl…\n$ `Postal Code`    &lt;chr&gt; \"77095\", \"60540\", \"60540\", \"60540\", \"19143\", \"42420\",…\n$ Region           &lt;chr&gt; \"Central\", \"Central\", \"Central\", \"Central\", \"East\", \"…\n$ `Product ID`     &lt;chr&gt; \"OFF-PA-10000174\", \"OFF-BI-10004094\", \"OFF-LA-1000322…\n$ Category         &lt;chr&gt; \"Office Supplies\", \"Office Supplies\", \"Office Supplie…\n$ `Sub-Category`   &lt;chr&gt; \"Paper\", \"Binders\", \"Labels\", \"Storage\", \"Art\", \"Chai…\n$ `Product Name`   &lt;chr&gt; \"Message Book, Wirebound, Four 5 1/2\\\" X 4\\\" Forms/Pg…\n$ Sales            &lt;dbl&gt; 16.448, 3.540, 11.784, 272.736, 19.536, 2573.820, 5.4…\n$ Quantity         &lt;dbl&gt; 2, 2, 3, 3, 3, 9, 2, 3, 2, 4, 1, 3, 4, 2, 3, 7, 2, 3,…\n$ Discount         &lt;dbl&gt; 0.20, 0.80, 0.20, 0.20, 0.20, 0.00, 0.00, 0.00, 0.00,…\n$ Profit           &lt;dbl&gt; 5.5512, -5.4870, 4.2717, -64.7748, 4.8840, 746.4078, …\n$ Year             &lt;dbl&gt; 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022, 2022,…\n$ Month            &lt;ord&gt; Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan, Jan…\n$ ProfitMargin     &lt;dbl&gt; 0.33750000, -1.55000000, 0.36250000, -0.23750000, 0.2…\n\n\nThe dataset contains 10194 rows and 24 columns, spanning orders from 2022-01-03 to 2025-12-30.\nKey variables we are using:\n\n\n\n\n\n\n\n\nVariable\nType\nDescription\n\n\n\n\nSales\nNumeric\nRevenue per order line\n\n\nProfit\nNumeric\nNet profit per order line\n\n\nDiscount\nNumeric\nDiscount rate applied (0–1)\n\n\nCategory\nCharacter\nFurniture / Office Supplies / Technology\n\n\nSub-Category\nCharacter\n17 product sub-types\n\n\nSegment\nCharacter\nConsumer / Corporate / Home Office\n\n\nRegion\nCharacter\nCentral / East / South / West\n\n\nShip Mode\nCharacter\nShipping speed tier"
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggrepel",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggrepel",
-    "title": "Hands-on Exercise 2",
-    "section": "Working with ggrepel",
-    "text": "Working with ggrepel\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm,\n              size = 0.5) +\n  geom_label_repel(aes(label = ID),\n                   fontface = \"bold\") +\n  coord_cartesian(xlim = c(0, 100),\n                  ylim = c(0, 100)) +\n  ggtitle(\"English scores versus Maths scores for Primary 3\")"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#tooltip-profit-margin-by-sub-category",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#tooltip-profit-margin-by-sub-category",
+    "title": "Hands-on Exercise 3",
+    "section": "Tooltip: Profit Margin by Sub-Category",
+    "text": "Tooltip: Profit Margin by Sub-Category\nWe start with a simple bar chart showing average profit margin per sub-category, with a rich tooltip revealing the full picture.\n\n# Summarise by sub-category\nsubcat_summary &lt;- superstore |&gt;  # |&gt; is the pipe operator, which takes the output of one expression and passes it as the first argument to the next function.\n  group_by(`Sub-Category`, Category) |&gt;\n  summarise(\n    TotalSales   = sum(Sales),\n    TotalProfit  = sum(Profit),\n    AvgMargin    = mean(ProfitMargin),\n    .groups = \"drop\"\n  ) |&gt;\n  mutate(\n    tooltip_text = paste0(\n      \"&lt;b&gt;\", `Sub-Category`, \"&lt;/b&gt;&lt;br&gt;\",\n      \"Category: \", Category, \"&lt;br&gt;\",\n      \"Total Sales: $\", scales::comma(round(TotalSales, 0)), \"&lt;br&gt;\",\n      \"Total Profit: $\", scales::comma(round(TotalProfit, 0)), \"&lt;br&gt;\",\n      \"Avg Margin: \", scales::percent(AvgMargin, accuracy = 0.1)\n    ),\n    fill_colour = case_when(\n      AvgMargin &gt;  0.15 ~ \"High\",\n      AvgMargin &gt;  0    ~ \"Positive\",\n      TRUE              ~ \"Loss-making\"\n    )\n  )\n\np_bar &lt;- ggplot(subcat_summary,\n                aes(x = reorder(`Sub-Category`, AvgMargin),\n                    y = AvgMargin,\n                    fill = fill_colour)) +\n  geom_col_interactive(\n    aes(tooltip = tooltip_text,\n        data_id = `Sub-Category`),\n    width = 0.7\n  ) +\n  geom_hline(yintercept = 0, colour = \"grey30\", linewidth = 0.4) +\n  scale_y_continuous(labels = percent_format(accuracy = 1)) +\n  scale_fill_manual(\n    values = c(\"High\" = \"#2196F3\", \"Positive\" = \"#81C784\", \"Loss-making\" = \"#E57373\"),\n    name = \"Margin tier\"\n  ) +\n  coord_flip() +\n  labs(\n    title    = \"Average Profit Margin by Sub-Category\",\n    subtitle = \"Hover for sales and profit details\",\n    x = NULL, y = \"Average Profit Margin\"\n  ) +\n  theme_minimal(base_size = 12) +\n  theme(legend.position = \"top\")\n\ngirafe(\n  ggobj       = p_bar,\n  width_svg   = 8,\n  height_svg  = 8 * 0.75\n)\n\n\n\n\n\n\n\n\n\n\n\nImportantTakeaway: Tables and Bookcases are destroying margins\n\n\n\nTables and Bookcases both have negative average profit margins, every sale in these sub-categories on average loses money. Paper, by contrast, have the highest profit margin, even if the total sales/revenue is not as high as Tables and Bookcases."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-annotation-ggrepel",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplot2-annotation-ggrepel",
-    "title": "Hands-on Exercise 2",
-    "section": "Beyond ggplot2 Annotation: ggrepel",
-    "text": "Beyond ggplot2 Annotation: ggrepel\nOne of the challenge in plotting statistical graph is annotation, especially with large number of data points.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS,\n           y = ENGLISH)) +\n  geom_point() +\n  geom_smooth(method = lm,\n              size = 0.5) +\n  geom_label(aes(label = ID),\n             hjust = .5,\n             vjust = -.5) +\n  coord_cartesian(xlim = c(0, 100),\n                  ylim = c(0, 100)) +\n  ggtitle(\"English scores versus Maths scores for Primary 3\")"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#customizing-tooltip-style",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#customizing-tooltip-style",
+    "title": "Hands-on Exercise 3",
+    "section": "Customizing Tooltip Style",
+    "text": "Customizing Tooltip Style\nWe can inject CSS into the tooltip via opts_tooltip(css = ...) inside girafe(options = list(...)).\n\ntooltip_css &lt;- \"\n  background-color: #1a1a2e;\n  color: #e0e0e0;\n  font-family: 'Courier New', monospace;\n  font-size: 12px;\n  border-radius: 6px;\n  padding: 8px 12px;\n  border: 1px solid #4fc3f7;\n\"\n\nregion_seg &lt;- superstore |&gt;\n  group_by(Region, Segment) |&gt;\n  summarise(\n    Sales  = sum(Sales),\n    Profit = sum(Profit),\n    .groups = \"drop\"\n  ) |&gt;\n  mutate(\n    tooltip_text = paste0(\n      \"Region: \", Region, \"\\n\",\n      \"Segment: \", Segment, \"\\n\",\n      \"Sales: $\", scales::comma(round(Sales, 0)), \"\\n\",\n      \"Profit: $\", scales::comma(round(Profit, 0))\n    )\n  )\n\np_heat &lt;- ggplot(region_seg, aes(x = Region, y = Segment, fill = Profit)) +\n  geom_tile_interactive(\n    aes(tooltip = tooltip_text, data_id = paste(Region, Segment)),\n    colour = \"white\", linewidth = 0.8\n  ) +\n  scale_fill_gradient2(\n    low     = \"#d32f2f\",\n    mid     = \"#fff9c4\",\n    high    = \"#388e3c\",\n    midpoint = 0,\n    labels  = dollar_format(scale = 1e-3, suffix = \"K\")\n  ) +\n  labs(\n    title    = \"Profit Heatmap: Region × Customer Segment\",\n    subtitle = \"Hover to see exact figures\",\n    fill     = \"Total Profit\",\n    x = NULL, y = NULL\n  ) +\n  theme_minimal(base_size = 13) +\n  theme(axis.text = element_text(size = 12))\n\ngirafe(\n  ggobj      = p_heat,\n  width_svg  = 7,\n  height_svg = 7 * 0.6,\n  options    = list(\n    opts_tooltip(css = tooltip_css, opacity = 0.95)\n  )\n)\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nThe West region is the most consistently profitable across all three segments. The Central region Consumer segment is the weakest performer proportionally despite high order volume."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplots-themes",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplots-themes",
-    "title": "Hands-on Exercise 2",
-    "section": "Beyond ggplots Themes",
-    "text": "Beyond ggplots Themes\nggplot2 comes with eight built-in themes, they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20,\n                 boundary = 100,\n                 color = \"grey25\",\n                 fill = \"grey90\") +\n  theme_gray() +\n  ggtitle(\"Distribution of Maths scores\")\n\n\n\nRefer to this link to learn more about ggplot2 Themes"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#hover-effect-with-data_id",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#hover-effect-with-data_id",
+    "title": "Hands-on Exercise 3",
+    "section": "Hover Effect with data_id",
+    "text": "Hover Effect with data_id\ndata_id let us highlight all elements that share the same group. When we hover over one bar, all bars in the same category light up together, which can be very useful for comparing within-group behaviour.\n\nsubcatplot &lt;- superstore |&gt;\n  group_by(Category, `Sub-Category`) |&gt;\n  summarise(TotalSales = sum(Sales), .groups = \"drop\")\n\np_grouped &lt;- ggplot(subcatplot,\n                    aes(x = reorder(`Sub-Category`, TotalSales),\n                        y = TotalSales,\n                        fill = Category)) +\n  geom_col_interactive(\n    aes(tooltip  = paste0(`Sub-Category`, \": $\", scales::comma(round(TotalSales, 0))),\n        data_id  = Category),\n    width = 0.75\n  ) +\n  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = \"K\")) +\n  scale_fill_brewer(palette = \"Set2\") +\n  coord_flip() +\n  labs(\n    title    = \"Total Sales by Sub-Category\",\n    subtitle = \"Hover to highlight all sub-categories within the same product category\",\n    x = NULL, y = \"Total Sales\",\n    fill = \"Category\"\n  ) +\n  theme_minimal(base_size = 12)\n\ngirafe(\n  ggobj      = p_grouped,\n  width_svg  = 8,\n  height_svg = 8 * 0.75,\n  options    = list(\n    opts_hover(css     = \"fill-opacity: 1; stroke: #333; stroke-width: 1.5px;\"),\n    opts_hover_inv(css = \"opacity: 0.15;\")\n  )\n)\n\n\n\n\n\n\n\n\n\n\n\nTipHow opts_hover_inv works\n\n\n\nopts_hover_inv controls the opacity of non-hovered elements. Setting opacity: 0.15 makes everything else fade out, directing attention to the hovered group."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggtheme",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-ggtheme",
-    "title": "Hands-on Exercise 2",
-    "section": "Working with ggtheme",
-    "text": "Working with ggtheme\nggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.\nIn the example below, The Economist theme is used.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20,\n                 boundary = 100,\n                 color = \"grey25\",\n                 fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores\") +\n  theme_economist()"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#coordinated-multiple-views-with-ggiraph",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#coordinated-multiple-views-with-ggiraph",
+    "title": "Hands-on Exercise 3",
+    "section": "Coordinated Multiple Views with ggiraph",
+    "text": "Coordinated Multiple Views with ggiraph\nAnother highligting feature of ggiraph is by assigning the same data_id (e.g. Sub-Category) to elements in two side-by-side plots, hovering in one automatically highlights the corresponding point in the other.\n\nsc &lt;- superstore |&gt;\n  group_by(`Sub-Category`, Category) |&gt;\n  summarise(\n    TotalSales  = sum(Sales),\n    TotalProfit = sum(Profit),\n    AvgDiscount = mean(Discount),\n    .groups     = \"drop\"\n  )\n\np_left &lt;- ggplot(sc, aes(x = reorder(`Sub-Category`, TotalSales), y = TotalSales, fill = Category)) +\n  geom_col_interactive(\n    aes(tooltip = paste0(`Sub-Category`, \"\\nSales: $\", scales::comma(round(TotalSales))),\n        data_id = `Sub-Category`),\n    width = 0.7\n  ) +\n  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = \"K\")) +\n  scale_fill_brewer(palette = \"Set2\") +\n  coord_flip() +\n  labs(title = \"Total Sales\", \n       subtitle = \"Linked views: hover on a sub-category in either plot to highlight it in both.\",\n       x = NULL, y = NULL) +\n  theme_minimal(base_size = 10) +\n  theme(legend.position = \"none\")\n\np_right &lt;- ggplot(sc, aes(x = reorder(`Sub-Category`, TotalSales), y = TotalProfit, fill = Category)) +\n  geom_col_interactive(\n    aes(tooltip = paste0(`Sub-Category`, \"\\nProfit: $\", scales::comma(round(TotalProfit))),\n        data_id = `Sub-Category`),\n    width = 0.7\n  ) +\n  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = \"K\")) +\n  scale_fill_brewer(palette = \"Set2\") +\n  coord_flip() +\n  labs(title = \"Total Profit\", x = NULL, y = NULL) +\n  theme_minimal(base_size = 10) +\n  theme(\n    axis.text.y  = element_blank(),\n    legend.position = \"none\"\n  )\n\ngirafe(\n  code       = print(p_left + p_right),\n  width_svg  = 10,\n  height_svg = 5,\n  options    = list(\n    opts_hover(css     = \"fill-opacity:1; stroke:#333; stroke-width:1.5px;\"),\n    opts_hover_inv(css = \"opacity:0.1;\")\n  )\n)\n\n\n\n\n\n\n\n\n\n\n\nImportantTakeaway: The Sales ≠ Profit trap\n\n\n\nChairs (#1 in sales) and Tables (#4) look similar on the left but differs largely on the right. Tables actually lose money at scale. Coordinated views make this contrast instantly visible in a way a single chart cannot."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-hrbrthemes",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#working-with-hrbrthemes",
-    "title": "Hands-on Exercise 2",
-    "section": "Working with hrbrthemes",
-    "text": "Working with hrbrthemes\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20,\n                 boundary = 100,\n                 color = \"grey25\",\n                 fill = \"grey90\") +\n  ggtitle(\"Distribution of Maths scores\") +\n  theme_ipsum(axis_title_size = 18,\n              base_size = 15,\n              grid = \"Y\")\n\n\n\n\n\n\n\n\n\nTipWhat can we learn from the code chunk above?\n\n\n\n\naxis_title_size argument is used to increase the font size of the axis title to 18,\nbase_size argument is used to increase the default axis label to 15, and\ngrid argument is used to remove the x-axis grid lines."
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#plot_ly-sales-vs-profit-scatter",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#plot_ly-sales-vs-profit-scatter",
+    "title": "Hands-on Exercise 3",
+    "section": "plot_ly(): Sales vs Profit Scatter",
+    "text": "plot_ly(): Sales vs Profit Scatter\n\norder_summary &lt;- superstore |&gt;\n  group_by(`Order ID`, Segment, Category) |&gt;\n  summarise(\n    Sales   = sum(Sales),\n    Profit  = sum(Profit),\n    .groups = \"drop\"\n  )\n\nplot_ly(\n  data   = order_summary,\n  x      = ~Sales,\n  y      = ~Profit,\n  color  = ~Segment,\n  symbol = ~Category,\n  type   = \"scatter\",\n  mode   = \"markers\",\n  marker = list(size = 5, opacity = 0.6),\n  text   = ~paste0(\"Segment: \", Segment,\n                   \"&lt;br&gt;Category: \", Category,\n                   \"&lt;br&gt;Sales: $\", round(Sales, 2),\n                   \"&lt;br&gt;Profit: $\", round(Profit, 2)),\n  hoverinfo = \"text\"\n) |&gt;\n  layout(\n    title  = \"Order-Level Sales vs Profit by Segment and Category\",\n    xaxis  = list(title = \"Order Sales ($)\", type = \"log\"),\n    yaxis  = list(title = \"Order Profit ($)\"),\n    legend = list(title = list(text = \"Segment\"))\n  )\n\n\n\nClick legend items to show/hide segments. Hover for details.\n\n\n\n\n\n\n\n\nNote\n\n\n\nThe log scale on the x-axis is intentional, due to the span on the sales amount. On a linear scale, most points would crowd into the left corner, distorting the patterns."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplots-themes-ggthemes-hrbrthemes",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-ggplots-themes-ggthemes-hrbrthemes",
-    "title": "Hands-on Exercise 2",
-    "section": "Beyond ggplots Themes: ggthemes & hrbrthemes",
-    "text": "Beyond ggplots Themes: ggthemes & hrbrthemes\nggplot2 comes with eight built-in themes, they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\nggplot(data = exam_data,\n       aes(x = MATHS)) +\n  geom_histogram(bins = 20,\n                 boundary = 100,\n                 color = \"grey25\",\n                 fill = \"grey90\") +\n  theme_gray() +\n  ggtitle(\"Distribution of Maths scores\")\n\n\n\nRefer to this link to learn more about ggplot2 Themes"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#ggplotly-monthly-sales-trend",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#ggplotly-monthly-sales-trend",
+    "title": "Hands-on Exercise 3",
+    "section": "ggplotly(): Monthly Sales Trend",
+    "text": "ggplotly(): Monthly Sales Trend\nWriting a normal ggplot, then wrap it in ggplotly() to get hover tooltips, zoom, and pan.\n\nmonthly &lt;- superstore |&gt;\n  group_by(Year, Month, Category) |&gt;\n  summarise(Sales = sum(Sales), .groups = \"drop\") |&gt;\n  mutate(YearMonth = paste(Year, Month, sep = \"-\"))\n\np_trend &lt;- ggplot(monthly,\n                  aes(x = Month, y = Sales, colour = Category, group = interaction(Year, Category),\n                      text = paste0(Month, \" \", Year,\n                                    \"&lt;br&gt;Category: \", Category,\n                                    \"&lt;br&gt;Sales: $\", scales::comma(round(Sales))))) +\n  geom_line(alpha = 0.5) +\n  geom_point(size = 2) +\n  facet_wrap(~Year, ncol = 2) +\n  scale_y_continuous(labels = dollar_format(scale = 1e-3, suffix = \"K\")) +\n  scale_colour_brewer(palette = \"Set1\") +\n  labs(\n    title    = \"Monthly Sales Trend by Category and Year\",\n    x        = NULL,\n    y        = \"Monthly Sales\",\n    colour   = \"Category\"\n  ) +\n  theme_minimal(base_size = 11) +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))\n\nggplotly(p_trend, tooltip = \"text\")\n\n\n\nHover over a point to see exact monthly figures. Use the legend to toggle categories.\n\n\n\n\n\n\n\n\nTipWhen to use ggplotly() vs plot_ly()\n\n\n\nUse ggplotly() when we already have a ggplot2 plot and just want interactivity quickly. Use plot_ly() when we need fine-grained control over plotly-specific features like 3D plots, animations, or custom hover templates."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-single-graph",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#beyond-single-graph",
-    "title": "Hands-on Exercise 2",
-    "section": "Beyond Single Graph",
-    "text": "Beyond Single Graph\nPlotting below 3 single graphs for composition.\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\np1 &lt;- ggplot(data=exam_data, \n             aes(x = MATHS)) +\n  geom_histogram(bins=20, \n                 boundary = 100,\n                 color=\"grey25\", \n                 fill=\"grey90\") + \n  coord_cartesian(xlim=c(0,100)) +\n  ggtitle(\"Distribution of Maths scores\")\n\n\n\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\np2 &lt;- ggplot(data=exam_data, \n             aes(x = ENGLISH)) +\n  geom_histogram(bins=20, \n                 boundary = 100,\n                 color=\"grey25\", \n                 fill=\"grey90\") +\n  coord_cartesian(xlim=c(0,100)) +\n  ggtitle(\"Distribution of English scores\")\n\n\n\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\np3 &lt;- ggplot(data=exam_data, \n             aes(x= MATHS, \n                 y=ENGLISH)) +\n  geom_point() +\n  geom_smooth(method=lm, \n              size=0.5) +  \n  coord_cartesian(xlim=c(0,100),\n                  ylim=c(0,100)) +\n  ggtitle(\"English scores versus Maths scores for Primary 3\")"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#coordinated-multiple-views-with-plotly",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#coordinated-multiple-views-with-plotly",
+    "title": "Hands-on Exercise 3",
+    "section": "Coordinated Multiple Views with plotly",
+    "text": "Coordinated Multiple Views with plotly\nUse highlight_key() to create a shared data object, build two separate plots, then can link them with subplot(). Clicking a point in one panel highlights the corresponding points in the other.\n\norder_view &lt;- superstore |&gt;\n  group_by(`Order ID`, Segment, Region) |&gt;\n  summarise(\n    Sales    = sum(Sales),\n    Profit   = sum(Profit),\n    Discount = mean(Discount),\n    .groups  = \"drop\"\n  )\n\nd_shared &lt;- highlight_key(order_view)\n\np1 &lt;- ggplot(d_shared, aes(x = Sales, y = Profit, colour = Segment,\n                            text = paste0(\"Order: \", `Order ID`,\n                                          \"&lt;br&gt;Segment: \", Segment,\n                                          \"&lt;br&gt;Sales: $\", round(Sales),\n                                          \"&lt;br&gt;Profit: $\", round(Profit)))) +\n  geom_point(size = 1.5, alpha = 0.5) +\n  scale_x_log10(labels = dollar_format()) +\n  scale_colour_brewer(palette = \"Set2\") +\n  labs(title = \"Sales vs Profit\", x = \"Sales (log)\", y = \"Profit\") +\n  theme_minimal(base_size = 10)\n\np2 &lt;- ggplot(d_shared, aes(x = Discount, y = Profit, colour = Segment,\n                            text = paste0(\"Order: \", `Order ID`,\n                                          \"&lt;br&gt;Discount: \", percent(Discount),\n                                          \"&lt;br&gt;Profit: $\", round(Profit)))) +\n  geom_point(size = 1.5, alpha = 0.5) +\n  scale_x_continuous(labels = percent_format()) +\n  scale_colour_brewer(palette = \"Set2\") +\n  labs(title = \"Discount vs Profit\", x = \"Discount Rate\", y = \"Profit\") +\n  theme_minimal(base_size = 10)\n\nsubplot(\n  ggplotly(p1, tooltip = \"text\"),\n  ggplotly(p2, tooltip = \"text\"),\n  nrows          = 1,\n  shareY         = TRUE,\n  titleX         = TRUE\n) |&gt;\n  highlight(on = \"plotly_click\", off = \"plotly_deselect\") |&gt;\n  layout(title = \"Coordinated View: Sales vs Profit & Discount vs Profit\")\n\n\n\nClick any point to highlight the same order across both panels.\n\n\n\n\n\n\n\n\nImportantTakeaway: Discounts beyond 40% are almost universally unprofitable\n\n\n\nThe right panel (Discount vs Profit) tells that orders with discounts above 40% are generally non-profitable. This is a structural pricing problem."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-plot-6",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-plot-6",
-    "title": "Hands-on Exercise 2",
-    "section": "The plot",
-    "text": "The plot"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#interactive-data-table-with-dt",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#interactive-data-table-with-dt",
+    "title": "Hands-on Exercise 3",
+    "section": "Interactive Data Table with DT",
+    "text": "Interactive Data Table with DT\n\nsuperstore |&gt;\n  select(`Order ID`, `Order Date`, Segment, Region, Category,\n         `Sub-Category`, Sales, Discount, Profit) |&gt;\n  mutate(\n    Sales    = round(Sales, 2),\n    Profit   = round(Profit, 2),\n    Discount = percent(Discount, accuracy = 1)\n  ) |&gt;\n  DT::datatable(\n    class      = \"compact stripe hover\",\n    rownames   = FALSE,\n    filter     = \"top\",\n    extensions = \"Buttons\",\n    options    = list(\n      pageLength = 10,\n      dom        = \"Bfrtip\",\n      buttons    = c(\"csv\", \"excel\")\n    )\n  ) |&gt;\n  DT::formatCurrency(c(\"Sales\", \"Profit\"), currency = \"$\", digits = 2) |&gt;\n  DT::formatStyle(\n    \"Profit\",\n    color = DT::styleInterval(0, c(\"#d32f2f\", \"#388e3c\"))\n  )\n\n\n\nSearch, sort, and page through the full order dataset.\n\n\n\n\n\n\n\n\nTip\n\n\n\nThe filter = \"top\" option adds per-column filter boxes, which is powerful for ad hoc slicing without writing any code. The Buttons extension adds CSV / Excel export."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-code-6",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-code-6",
-    "title": "Hands-on Exercise 2",
-    "section": "The code",
-    "text": "The code\np2 &lt;- ggplot(data=exam_data, \n             aes(x = ENGLISH)) +\n  geom_histogram(bins=20, \n                 boundary = 100,\n                 color=\"grey25\", \n                 fill=\"grey90\") +\n  coord_cartesian(xlim=c(0,100)) +\n  ggtitle(\"Distribution of English scores\")\n:::"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#linked-brushing-scatter-table",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#linked-brushing-scatter-table",
+    "title": "Hands-on Exercise 3",
+    "section": "Linked Brushing: Scatter + Table",
+    "text": "Linked Brushing: Scatter + Table\nThe final pattern is the most powerful: select points on the scatter, and the table below automatically filters to show only those rows.\n\nbrush_data &lt;- superstore |&gt;\n  select(`Order ID`, `Customer Name`, Segment, Region, Category,\n         `Sub-Category`, Sales, Discount, Profit) |&gt;\n  mutate(\n    Sales    = round(Sales, 2),\n    Profit   = round(Profit, 2)\n  )\n\nd_brush &lt;- highlight_key(brush_data)\n\nscatter &lt;- ggplot(d_brush, aes(x = Sales, y = Profit,\n                                colour = Category,\n                                text   = paste0(`Sub-Category`,\n                                                \"&lt;br&gt;\", `Customer Name`,\n                                                \"&lt;br&gt;$\", Sales, \" / $\", Profit))) +\n  geom_point(alpha = 0.5, size = 1.5) +\n  scale_x_log10(labels = dollar_format()) +\n  scale_colour_brewer(palette = \"Set1\") +\n  labs(\n    title  = \"Click or drag to select — table below updates automatically\",\n    x      = \"Sales (log scale)\",\n    y      = \"Profit ($)\"\n  ) +\n  theme_minimal(base_size = 11)\n\ngg_scatter &lt;- highlight(\n  ggplotly(scatter, tooltip = \"text\"),\n  on  = \"plotly_selected\",\n  off = \"plotly_deselect\"\n)\n\ncrosstalk::bscols(\n  widths = c(12),\n  gg_scatter,\n  DT::datatable(\n    d_brush,\n    class    = \"compact\",\n    rownames = FALSE,\n    options  = list(pageLength = 8, scrollX = TRUE)\n  ) |&gt;\n    DT::formatCurrency(c(\"Sales\", \"Profit\"))\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\nDrag to select a region on the scatter plot — the table updates to match.\n\n\n\n\n\n\n\n\nNoteHow crosstalk works under the hood\n\n\n\nhighlight() is a function of plotly package. It sets a variety of options for brushing (i.e., highlighting) multiple plots. These options are primarily designed for linking multiple plotly graphs, and may not behave as expected when linking plotly to another htmlwidget package via crosstalk. In some cases, other htmlwidgets will respect these options, such as persistent selection in leaflet."
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-composite-graphics-pathwork-methods",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-composite-graphics-pathwork-methods",
-    "title": "Hands-on Exercise 2",
-    "section": "Creating Composite Graphics: pathwork methods",
-    "text": "Creating Composite Graphics: pathwork methods\n\nThe plotThe code\n\n\n\n\n\n\n\n\n\n\n\n\n\n(p1 / p2) | p3"
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#methodological-lessons",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#methodological-lessons",
+    "title": "Hands-on Exercise 3",
+    "section": "Methodological Lessons",
+    "text": "Methodological Lessons\n\n\n\n\n\n\n\nConcept\nKey Point\n\n\n\n\ngeom_*_interactive()\nDrop-in replacement for ggplot2 geoms; tooltip/data_id/onclick are the three hooks\n\n\ngirafe()\nFinalises the SVG widget; opts_tooltip(), opts_hover(), opts_hover_inv() control styling\n\n\ndata_id\nThe bridge for coordinated views in ggiraph, using the same column in both plots\n\n\nggplotly()\nFastest path to interactivity, passing tooltip = \"text\" for custom hover text\n\n\nhighlight_key()\nShared data pointer, binding multiple widgets to it for linked brushing without Shiny\n\n\nsubplot()\nPlaces plotly charts side-by-side with optional shared axes\n\n\nDT::datatable()\nPowerful for exploration; filter = \"top\" and Buttons extension are useful"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#business-insights-from-the-superstore-data",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html#business-insights-from-the-superstore-data",
+    "title": "Hands-on Exercise 3",
+    "section": "Business Insights from the Superstore Data",
+    "text": "Business Insights from the Superstore Data\n\nTables and Bookcases are money-losers. Despite Table’s ranking as the 4th highest revenue sub-category, it runs at a negative average profit margin. Discounting in Furniture is likely the culprit.\nDiscounts over 40% are almost never profitable. The discount–profit scatter shows a clear inflection point around 40%. Any discount above that level correlates strongly with negative profit.\nTechnology has the best margin quality. Despite not being the top revenue category, Technology generates the highest total profit, where it was driven by Copiers and Accessories, both of which have strong positive margins.\nThe West region leads profitability across all three customer segments. The Central region is the most volatile.\nSales volume alone is a misleading KPI. Chairs are the #1 sub-category by revenue but sit in the middle of profit rankings. Any sales dashboard that shows only revenue is hiding the costs."
   }
 ]
