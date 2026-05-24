@@ -1,0 +1,286 @@
+---
+title: "Visual Analytics for Insurance Portfolio Data Discovery"
+subtitle: "Executive Summary: Spanish Motor Vehicle Insurance Portfolio"
+author: "Lei Yuhe"
+date: "May 24, 2026"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    slide-number: true
+    progress: true
+    transition: slide
+    background-transition: fade
+    fig-align: center
+    footer: "ISSS608 Visual Analytics"
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## Contents
+
+| \#  | Topic                                                  |
+|-----|--------------------------------------------------------|
+| 1   | Portfolio Overview & Data Context                      |
+| 2   | Premium Distribution: Right-Skewed Pricing             |
+| 3   | Claim Severity: Log-Normal Structure                   |
+| 4   | Loss Ratio: Portfolio Profitability Profile            |
+| 5   | Policy Type: Who Drives Losses?                        |
+| 6   | Driver Age: Lifecycle Risk Patterns                    |
+| 7   | Geography & Fuel Type: Loss Ratio Heatmap              |
+| 8   | Bonus Score: Past Claim Experience as a Signal         |
+| 9   | Vehicle Age & Loss Ratio: Risk Bubble Chart            |
+| 10  | Business Type & Payment Frequency: Behavioural Signals |
+| 11  | Key Takeaways & Recommendations                        |
+
+
+
+------------------------------------------------------------------------
+
+## Slide 1: Portfolio Overview {.smaller}
+
+::::: columns
+::: {.column width="50%"}
+**Dataset at a Glance**
+
+-   **Source:** Mendeley Data, a real Spanish non-life insurer
+-   **Policy years:** 2022–2024
+-   **Key variables:** 21 fields per policy record
+-   **Loss Ratio** = Incurred / Premium *(profitability)*
+-   **Claim Frequency** = Claims / Exposure *(volatility)*
+
+**Data Quality**
+
+| Variable        | Missing |
+|-----------------|---------|
+| `fuel_type`     | 1,287   |
+| `vehicle_value` | 513     |
+| `loss_ratio`    | 48      |
+:::
+
+::: {.column width="50%"}
+**Outlier Treatment**
+
+Insurance data is naturally heavy-tailed. Policies beyond the **99th percentile** were excluded from primary charts:
+
+-   Loss Ratio 99th percentile = **12.37**, 3,541 policies flagged
+-   Claim Frequency 99th percentile = **5**,  3,052 policies flagged
+
+Filtering improves visual interpretability without ignoring tail risk.
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Slide 2: Premium Distribution is Right-Skewed {.smaller}
+
+::::: columns
+::: {.column width="60%"}
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis1-premium-1.png){width="100%"}
+:::
+
+::: {.column width="40%"}
+**Key Findings**
+
+-   Distribution is strongly **right-skewed**, most policyholders pay under **€1,000**
+-   Long right tail reflects policies covering **high-value vehicles** and **comprehensive coverage**
+
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Slide 3: Claim Distribution is Right-Skewed {.smaller}
+
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis2-incurred-1.png){width="100%"}
+
+**Key Findings**
+
+-   Most policies record **zero claims**, the majority of incurred cost is driven by a minority
+-   Log-transformed distribution shows an **approximately log-normal** pattern
+
+
+------------------------------------------------------------------------
+
+## Slide 4: Portfolio Profitability Profile (Loss Ratio) {.smaller}
+
+::::: columns
+::: {.column width="65%"}
+**What is Loss Ratio (LR)?** `LR = Total Incurred / Total Premium`
+
+-   **LR \< 1**: Profitable
+-   **LR = 1**: Break-even
+-   **LR \> 1**: Unprofitable
+
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis3-loss-ratio-1.png){width="100%" height="70%"}
+:::
+
+::: {.column width="35%"}
+**Key Findings**
+
+-   Distribution is **bimodal**: a massive spike at 0 and a long right-tail for claimants
+-   After 99th pct filtering, LR extends to \~12
+
+:::
+:::::
+
+------------------------------------------------------------------------
+
+## Slide 5: Policy Type: Who Drives the Losses? {.smaller}
+
+::::: columns
+::: {.column width="60%"}
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis9-lr-policy-type-1.png){width="100%"}
+:::
+
+::: {.column width="40%"}
+**Policy Types in Portfolio**
+
+| Type   | Coverage                  | Risk   |
+|--------|---------------------------|--------|
+| COMP_E | Comprehensive + excess    | High   |
+| COMP_N | Comprehensive, no excess  | Medium |
+| CC     | Comprehensive third party | High   |
+| TPG    | Third Party + Glass       | Low    |
+| TP     | Third Party Only          | Lowest |
+
+-   Comprehensive policies such as **COMP_E and CC** show the highest median LR and widest range
+-   **TP and TPG** cluster near zero LR
+-   **Kruskal-Wallis test confirms** differences are statistically significant
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Slide 6: Risk Patterns in a U-shape curve for Driver Age {.smaller}
+
+::::: columns
+::: {.column width="60%"}
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis11-lr-driver-age-1.png){width="100%"}
+:::
+
+::: {.column width="40%"}
+**Key Findings**
+
+-   **18–25 yrs:** Highest median LR, widest spread, elevated catastrophic claim risk
+-   **26–45 yrs:** Moderate LR, distribution narrows with experience
+-   **46–65 yrs:** Lowest median LR, most profitable driver segment
+-   **65+ yrs:** LR rises again, tail risk re-emerges
+
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Slide 7: Geography & Fuel Type Loss Ratio Heatmap {.smaller}
+
+::::: columns
+::: {.column width="60%"}
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis12-heatmap-lr-1.png){width="100%"}
+:::
+
+::: {.column width="40%"}
+**Key Findings**
+
+Heatmap cells encode mean Loss Ratio.
+
+-   **Urban** policies consistently generate higher loss ratios than rural's 
+-   **Diesel** vehicles display higher loss ratios than gasoline regardless of area, suggesting higher vehicle utilisation or claim severity
+
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Slide 8: Bonus Score (Past Claims as a Signal) {.smaller}
+
+::::: columns
+::: {.column width="60%"}
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis16-ridgeline-bonus-1.png){width="100%"}
+:::
+
+::: {.column width="40%"}
+**Key Findings**
+
+**Bonus score** reflects a policyholder's past claim experience.
+
+-   Majority of policies remain profitable regardless of bonus category
+-   All groups display strong right-skewness, meaning a relatively small number of policies generate disproportionately large claim costs and underwriting losses
+
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Slide 9: Vehicle Age & Loss Ratio in Bubble Chart {.smaller}
+
+::::: columns
+::: {.column width="60%"}
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis15-bubble-1.png){width="100%"}
+:::
+
+::: {.column width="40%"}
+**Key Findings**
+
+-   **Newer vehicles (0–2 years)** exhibit the highest claim frequency, indicating that recently purchased vehicles are associated with more frequent claim activity, although their average loss ratios remain relatively stable.
+-   **Older vehicles (15+ years)** show the lowest claim frequency and relatively low loss ratios, while also representing one of the largest policy segments, suggesting a stable and profitable customer group.
+-   Vehicle age alone is not sufficient in explaining loss ratio. 
+
+:::
+:::::
+
+
+------------------------------------------------------------------------
+
+## Slide 10: Business Type & Payment Frequency {.smaller}
+
+:::: {.columns}
+
+::: {.column width="70%"}
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis7-business-payment-1.png){width="100%" height="250px"}
+
+![](https://isss608-vaa-three.vercel.app/Take-home_Ex/Take-home_Ex01/Take-home_Ex01_files/figure-html/vis18-claim-incidence-1.png){width="100%" height="270px"}
+:::
+
+::: {.column width="30%"}
+**Key Findings**
+
+- The portfolio is heavily dominated by **New Business policies (69.3%)** and **annual payment plans (81.4%)**, indicating a growth-oriented portfolio structure
+- **Renewal customers** driving higher claim incidence rates
+- Payment frequency may act as a behavioural or financial risk indicator useful for underwriting and customer segmentation
+:::
+
+::::
+
+------------------------------------------------------------------------
+
+## Slide 11: Key Takeaways & Recommendations {.smaller}
+
+**Top Data-Backed Discoveries**
+
+::::: columns
+::: {.column width="50%"}
+1. Comprehensive insurance products are the primary profitability risk drivers, exhibiting the highest loss ratios and widest variability, indicating greater exposure to severe and volatile claims.
+2. Driver age demonstrates a U-shaped risk pattern, where younger (18–25) and older (65+) drivers experience higher risk levels, while middle-aged drivers remain the most stable and profitable segment.
+3. Urban policies consistently generate higher loss ratios and claim frequencies than rural policies, suggesting that traffic density and driving environment significantly influence underwriting risk.
+:::
+
+::: {.column width="50%"}
+**Recommendations**
+
+1. Strengthen Risk-Based Pricing: The insurer should apply more granular pricing adjustments for comprehensive policyholders, urban drivers, and high-risk age groups. 
+2. Develop targeted underwriting rules for high-risk customer segments. 
+3. Since a small number of policies generate disproportionately large losses, the insurer should strengthen fraud detection and improve catastrophic claims monitoring. 
+
+:::
+:::::
+
+

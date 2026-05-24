@@ -1,0 +1,108 @@
+/*-- scss:defaults --*/
+
+// Fonts
+$font-family-sans-serif: 'DM Sans', sans-serif;
+$font-family-monospace:  'DM Mono', monospace;
+$presentation-font-size-root: 28px;
+
+// Heading font
+$presentation-heading-font: 'DM Sans', sans-serif;
+$presentation-heading-color: #1a1a2e;
+$presentation-heading-font-weight: 700;
+
+// Body
+$body-color: #2c2c3e;
+$link-color: #2a6dac;
+
+
+/*-- scss:rules --*/
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+// Slide heading underline accent
+.reveal h2 {
+  border-bottom: 3px solid #2a6dac;
+  padding-bottom: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+// Tables
+.reveal table {
+  font-size: 0.8em;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.reveal table th {
+  background: #eef3fa;
+  color: #1a1a2e;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 2px solid #2a6dac;
+  font-weight: 600;
+  text-align: left;
+}
+
+.reveal table td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid #dde3ec;
+}
+
+.reveal table tr:hover td {
+  background: #f5f8fd;
+}
+
+// Blockquote (used for the summary callout on the final slide)
+.reveal blockquote {
+  border-left: 4px solid #2a6dac;
+  background: #eef3fa;
+  padding: 0.8rem 1.2rem;
+  border-radius: 4px;
+  color: #1a1a2e;
+  font-style: normal;
+  font-size: 0.85em;
+  margin-top: 1rem;
+  box-shadow: none;
+}
+
+// Inline code
+.reveal code {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82em;
+  color: #c0392b;
+  background: #fdf2f0;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+// Images
+.reveal img {
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+// Footer
+.reveal .footer {
+  font-size: 0.58em;
+  color: #888;
+}
+
+// Slide number
+.reveal .slide-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62em;
+  color: #aaa;
+  background: transparent;
+}
+
+// Progress bar
+.reveal .progress {
+  height: 3px;
+  color: #2a6dac;
+}
+
+// List spacing
+.reveal ul,
+.reveal ol {
+  line-height: 1.75;
+  li { margin-bottom: 0.2rem; }
+}

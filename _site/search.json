@@ -915,5 +915,215 @@
     "title": "ISSS608-VAA",
     "section": "",
     "text": "Welcome to ISSS608 Visual Analytics and Applications. In this website, you will find my coursework prepared for this course."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-1-cover",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-1-cover",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 1: Cover",
+    "text": "Slide 1: Cover"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-2-contents",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-2-contents",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 2: Contents",
+    "text": "Slide 2: Contents\nAgenda\n\n\n\n#\nTopic\n\n\n\n\n1\nPortfolio Overview & Data Context\n\n\n2\nPremium Distribution: Right-Skewed Pricing\n\n\n3\nClaim Severity: Log-Normal Structure\n\n\n4\nLoss Ratio: Portfolio Profitability Profile\n\n\n5\nPolicy Type: Who Drives Losses?\n\n\n6\nDriver Age: Lifecycle Risk Patterns\n\n\n7\nGeography & Fuel Type Loss Ratio Heatmap\n\n\n8\nBonus Score: Past Claim Experience as a Signal\n\n\n9\nVehicle Age & Loss Ratio: Risk Bubble Chart\n\n\n10\nBusiness Type & Payment Frequency: Behavioural Signals\n\n\n11\nKey Takeaways & Actionable Recommendations"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-3-portfolio-overview",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-3-portfolio-overview",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 3: Portfolio Overview",
+    "text": "Slide 3: Portfolio Overview\n\n\nDataset at a Glance\n\nSource: Mendeley Data - real Spanish non-life insurer\n\nPolicy years: 2022–2024\n\nKey variables: 21 fields per policy-record\n\nDerived metrics:\n\nLoss Ratio = Incurred / Premium (profitability)\n\nClaim Frequency = Claims / Exposure (volatility)\n\n\nData Quality\n\n\n\nVariable\nMissing\n\n\n\n\nfuel_type\n1,287\n\n\nvehicle_value\n513\n\n\nloss_ratio\n48\n\n\n\n\nOutlier Treatment\nInsurance data is naturally heavy-tailed. Policies beyond the 99th percentile were flagged and excluded from primary charts:\n\n\nLoss Ratio 99th pct = 12.37\n3,541 extreme policies flagged\n\nClaim Frequency 99th pct = 5.0\n3,052 extreme policies flagged\n\n\nCatastrophic tail events are real but distort portfolio-level patterns. Filtering improves visual interpretability without ignoring tail risk."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-4-premium-distribution-right-skewed-pricing",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-4-premium-distribution-right-skewed-pricing",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 4: Premium Distribution: Right-Skewed Pricing",
+    "text": "Slide 4: Premium Distribution: Right-Skewed Pricing\n\n\n\n\n\nPremium Distribution: Histogram + Violin Plot\n\n\n\nKey Findings\nInterpretation:\n\nThe distribution is strongly right-skewed, most policyholders pay under €1,000.\nA long right tail reflects high-value vehicles and comprehensive coverage.\n\nDesign note: Histogram + violin pairing encodes both density shape and spread in a single glance."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-5-claim-severity-log-normal-structure",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-5-claim-severity-log-normal-structure",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 5: Claim Severity: Log-Normal Structure",
+    "text": "Slide 5: Claim Severity: Log-Normal Structure\n\n\n\n\n\nClaim Severity: Raw vs Log-Transformed Distribution\n\n\n\nKey Findings\nInterpretation:\n\nMost policies record zero claims, implying the majority of incurred cost is driven by a minority of policy.\nRaw claim distribution is extremely right-skewed, dominated by a catastrophic right tail.\nLog-transformed distribution shows an approximately log-normal pattern.\n\nDesign note: Side-by-side raw versus log view present more clarity and communicate the transformation rationale."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-6-loss-ratio-portfolio-profitability-profile",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-6-loss-ratio-portfolio-profitability-profile",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 6: Loss Ratio: Portfolio Profitability Profile",
+    "text": "Slide 6: Loss Ratio: Portfolio Profitability Profile\n\n\n\nWhat is Loss Ratio (LR)?\nLR = Total Incurred / Total Premium\n- LR &lt; 1: Profitable policy\n- LR = 1: Break-even\n- LR &gt; 1: Unprofitable (payout exceeds premium)\n\nPortfolio-Level Profitability\n\n\n\nLoss Ratio: Portfolio Profitability Profile\n\n\n\nKey Findings\n\nThe LR distribution is bimodal: a massive spike at 0 (no-claim policies) and a secondary right-skewed hump for claimants.\nThe threshold at LR = 1 separates profitable from unprofitable policies.\nAfter 99th percentile filtering, LR extends to ~12 (1200%), but most claimant policies have moderate LR values between 0 and 3.\nThe median LR across the entire portfolio is 0, driven by the large no-claim majority."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-7-policy-type-who-drives-the-losses",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-7-policy-type-who-drives-the-losses",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 7: Policy Type: Who Drives the Losses?",
+    "text": "Slide 7: Policy Type: Who Drives the Losses?\n\n\n\n\n\nLoss Ratio by Policy Type in Raincloud Plot with ANOVA\n\n\n\nKey Findings\nPolicy Types in Portfolio:\n\n\n\nType\nCoverage\nRisk Profile\n\n\n\n\nCOMP_E\nComprehensive with excess\nHigh\n\n\nCOMP_N\nComprehensive, no excess\nMedium\n\n\nCC\nComprehensive third party\nHigh\n\n\nTPG\nThird Party+Glass\nLow\n\n\nTP\nThird Party Only\nLowest\n\n\n\n\n\nComprehensive coverage carries significantly more risk.\n\n\nStatistical test (Kruskal-Wallis) confirms differences are significant, meaning policy type is a strong explanatory factor of loss ratio."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-8-driver-age-lifecycle-risk-patterns",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-8-driver-age-lifecycle-risk-patterns",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 8: Driver Age: Lifecycle Risk Patterns",
+    "text": "Slide 8: Driver Age: Lifecycle Risk Patterns\n\n\n\n\n\nLoss Ratio by Driver Age Group\n\n\n\nKey Findings\n\n\n18–25 yrs: Highest median LR, widest spread, elevated catastrophic claim risk.\n\n\n26–45 yrs: Moderate LR, distribution narrows substantially with experience.\n\n\n46–65 yrs: Lowest median LR, most profitable driver segment.\n\n\n65+ yrs: LR rises again, tail risk re-emerges for elderly drivers."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-9-geography-fuel-type-loss-ratio-heatmap",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-9-geography-fuel-type-loss-ratio-heatmap",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 9: Geography & Fuel Type: Loss Ratio Heatmap",
+    "text": "Slide 9: Geography & Fuel Type: Loss Ratio Heatmap\n\n\n\n\n\nLoss Ratio by Circulation Area and Fuel Type in Heatmap\n\n\n\nKey Findings\nKey Takeaway:\n\nUrban policies consistently generate higher loss ratios than rural policies.\nDiesel vehicles also display higher loss ratios than gasoline vehicles regardless of area, indicating that fuel type may be associated with higher vehicle utilisation or claim severity.."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-10-bonus-score-past-claims-as-a-signal",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-10-bonus-score-past-claims-as-a-signal",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 10: Bonus Score: Past Claims as a Signal",
+    "text": "Slide 10: Bonus Score: Past Claims as a Signal\n\n\n\n\n\nLoss Ratio by Bonus Score in Ridgeline Plot\n\n\n\nKey Findings\nBonus score reflects a policyholder’s past claim experience.\nThere is substantial overlap between the distributions, indicating that bonus score alone is insufficient to fully explain profitability differences."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-11-vehicle-age-loss-ratio-in-a-bubble-chart",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-11-vehicle-age-loss-ratio-in-a-bubble-chart",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 11: Vehicle Age & Loss Ratio in a Bubble Chart",
+    "text": "Slide 11: Vehicle Age & Loss Ratio in a Bubble Chart\n\n\n\n\n\nVehicle Age vs Loss Ratio Bubble Chart by Policy Type\n\n\n\nKey Findings\n\n\nNewer vehicles aged 0–2 years exhibit the highest average claim frequency, suggesting more active claims behaviour among owners of recently purchased vehicles, although the loss ratio remains at low level.\n\n\n\n\nIn contrast, older vehicles aged 15 years and above display the lowest claim frequency and relatively low loss ratios while representing one of the largest portfolio segments."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-12-business-type-payment-frequency",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-12-business-type-payment-frequency",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 12: Business Type & Payment Frequency",
+    "text": "Slide 12: Business Type & Payment Frequency\n\n\n\n\n\n\n\nBusiness Type & Payment Frequency\n\n\n\n\n\n\nClaim Incidence by Business Type and Payment Frequency\n\n\n\n\nKey Findings\n\n\n\nNew Business: Lower claim incidence rate across all payment frequencies.\n\n\n\nRenewals: Consistently higher claim incidence rate compared to new business.\n\n\n\nAnnual payers show a lower claim incidence rate than quarterly payers, financial stability correlates with lower risk behaviour."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-13-key-takeaways-recommendations",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-13-key-takeaways-recommendations",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 13: Key Takeaways & Recommendations",
+    "text": "Slide 13: Key Takeaways & Recommendations\nTop Data-Backed Discoveries\n\n\n\n\nComprehensive policies are the primary loss drivers, incurring highest median LR with widest variance.\n\n\n\n\nYoung drivers (18–25) and elderly (65+) form the U-shaped risk curve.\n\n\n\n\nUrban policies consistently generate higher loss ratios than rural policies.\n\n\n\n\nThe portfolio is dominated by New Business customers but Renewal Customers consistently show higher claim incidence."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#contents",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#contents",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Contents",
+    "text": "Contents\n\n\n\n#\nTopic\n\n\n\n\n1\nPortfolio Overview & Data Context\n\n\n2\nPremium Distribution: Right-Skewed Pricing\n\n\n3\nClaim Severity: Log-Normal Structure\n\n\n4\nLoss Ratio: Portfolio Profitability Profile\n\n\n5\nPolicy Type: Who Drives Losses?\n\n\n6\nDriver Age: Lifecycle Risk Patterns\n\n\n7\nGeography & Fuel Type: Loss Ratio Heatmap\n\n\n8\nBonus Score: Past Claim Experience as a Signal\n\n\n9\nVehicle Age & Loss Ratio: Risk Bubble Chart\n\n\n10\nBusiness Type & Payment Frequency: Behavioural Signals\n\n\n11\nKey Takeaways & Recommendations"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-1-portfolio-overview",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-1-portfolio-overview",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 1: Portfolio Overview",
+    "text": "Slide 1: Portfolio Overview\n\n\nDataset at a Glance\n\nSource: Mendeley Data, a real Spanish non-life insurer\nPolicy years: 2022–2024\nKey variables: 21 fields per policy record\nLoss Ratio = Incurred / Premium (profitability)\nClaim Frequency = Claims / Exposure (volatility)\n\nData Quality\n\n\n\nVariable\nMissing\n\n\n\n\nfuel_type\n1,287\n\n\nvehicle_value\n513\n\n\nloss_ratio\n48\n\n\n\n\nOutlier Treatment\nInsurance data is naturally heavy-tailed. Policies beyond the 99th percentile were excluded from primary charts:\n\nLoss Ratio 99th percentile = 12.37, 3,541 policies flagged\nClaim Frequency 99th percentile = 5, 3,052 policies flagged\n\nFiltering improves visual interpretability without ignoring tail risk."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-2-premium-distribution-right-skewed-pricing",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-2-premium-distribution-right-skewed-pricing",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 2: Premium Distribution — Right-Skewed Pricing",
+    "text": "Slide 2: Premium Distribution — Right-Skewed Pricing\n\n\n\n\nKey Findings\n\nDistribution is strongly right-skewed — most policyholders pay under €1,000\nMedian ≈ €258, Mean ≈ €297, 75th pct ≈ €385\nLong right tail reflects high-value vehicles and comprehensive coverage\n\nDesign note: Histogram + violin pairing encodes both density shape and spread in a single glance."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-3-claim-severity-log-normal-structure",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-3-claim-severity-log-normal-structure",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 3: Claim Severity — Log-Normal Structure",
+    "text": "Slide 3: Claim Severity — Log-Normal Structure\n\n\n\n\nKey Findings\n\nMost policies record zero claims — the majority of incurred cost is driven by a minority\nRaw claim distribution is extremely right-skewed, dominated by a catastrophic right tail\nLog-transformed distribution shows an approximately log-normal pattern — validating standard actuarial severity assumptions\n\nDesign note: Side-by-side raw vs log view communicates the transformation rationale clearly."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-4-loss-ratio-portfolio-profitability-profile",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-4-loss-ratio-portfolio-profitability-profile",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 4: Loss Ratio — Portfolio Profitability Profile",
+    "text": "Slide 4: Loss Ratio — Portfolio Profitability Profile\n\n\nWhat is Loss Ratio (LR)?\nLR = Total Incurred ÷ Total Premium\n\nLR &lt; 1 → Profitable policy\nLR = 1 → Break-even\nLR &gt; 1 → Unprofitable\n\n\n\nKey Findings\n\n~83% of policies have LR = 0 (no claim)\n~17% of policies have LR &gt; 0 (some claim)\nDistribution is bimodal: a massive spike at 0 and a right-skewed hump for claimants\nAfter 99th pct filtering, LR extends to ~12.4\nMedian LR across the full portfolio = 0\n\nDesign note: Green/red fill encoding at LR = 1 makes the business threshold instantly visible without extra annotation."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-5-policy-type-who-drives-the-losses",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-5-policy-type-who-drives-the-losses",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 5: Policy Type: Who Drives the Losses?",
+    "text": "Slide 5: Policy Type: Who Drives the Losses?\n\n\n\n\nPolicy Types in Portfolio\n\n\n\nType\nCoverage\nRisk\n\n\n\n\nCOMP_E\nComprehensive + excess\nHigh\n\n\nCOMP_N\nComprehensive, no excess\nMedium\n\n\nCC\nComprehensive third party\nHigh\n\n\nTPG\nThird Party + Glass\nLow\n\n\nTP\nThird Party Only\nLowest\n\n\n\n\nComprehensive policies such as COMP_E and CC show the highest median LR and widest range\nTP and TPG cluster near zero LR\nKruskal-Wallis test confirms differences are statistically significant"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-6-driver-age-lifecycle-risk-patterns",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-6-driver-age-lifecycle-risk-patterns",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 6: Driver Age — Lifecycle Risk Patterns",
+    "text": "Slide 6: Driver Age — Lifecycle Risk Patterns\n\n\n\n\nKey Findings\n\n18–25 yrs: Highest median LR, widest spread, elevated catastrophic claim risk\n26–45 yrs: Moderate LR, distribution narrows with experience\n46–65 yrs: Lowest median LR — most profitable driver segment\n65+ yrs: LR rises again, tail risk re-emerges\n\nPortfolio median driver age = 48 yrs (IQR: 39–58) — bulk of portfolio sits in the most profitable band."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-7-geography-fuel-type-loss-ratio-heatmap",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-7-geography-fuel-type-loss-ratio-heatmap",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 7: Geography & Fuel Type Loss Ratio Heatmap",
+    "text": "Slide 7: Geography & Fuel Type Loss Ratio Heatmap\n\n\n\n\nKey Findings\nHeatmap cells encode mean Loss Ratio.\n\nUrban policies consistently generate higher loss ratios than rural’s\nDiesel vehicles display higher loss ratios than gasoline regardless of area, suggesting higher vehicle utilisation or claim severity"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-8-bonus-score-past-claims-as-a-signal",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-8-bonus-score-past-claims-as-a-signal",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 8: Bonus Score (Past Claims as a Signal)",
+    "text": "Slide 8: Bonus Score (Past Claims as a Signal)\n\n\n\n\nKey Findings\nBonus score reflects a policyholder’s past claim experience.\n\nMajority of policies remain profitable regardless of bonus category\nAll groups display strong right-skewness, meaning a relatively small number of policies generate disproportionately large claim costs and underwriting losses"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-9-vehicle-age-loss-ratio-risk-bubble-chart",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-9-vehicle-age-loss-ratio-risk-bubble-chart",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 9: Vehicle Age & Loss Ratio — Risk Bubble Chart",
+    "text": "Slide 9: Vehicle Age & Loss Ratio — Risk Bubble Chart\n\n\n\n\nKey Findings\nAxes: vehicle age (x) vs mean LR (y). Bubble size = policy count. Colour = policy type.\n\nNewer vehicles (0–2 yrs): Highest average claim frequency, though loss ratios remain moderate\nOlder vehicles (15+ yrs): Lowest claim frequency and relatively low loss ratios — one of the largest portfolio segments\nVehicle age alone is not a reliable risk predictor — interaction with policy type is essential\n\nDesign note: Bubble chart encodes 4 variables simultaneously — a high information-density design."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-10-business-type-payment-frequency",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-10-business-type-payment-frequency",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 10: Business Type & Payment Frequency",
+    "text": "Slide 10: Business Type & Payment Frequency\n\n\n\n\n\nKey Findings\n\nThe portfolio is heavily dominated by New Business policies (69.3%) and annual payment plans (81.4%), indicating a growth-oriented portfolio structure\nRenewal customers driving higher claim incidence rates\nPayment frequency may act as a behavioural or financial risk indicator useful for underwriting and customer segmentation"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-11-key-takeaways-recommendations",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-11-key-takeaways-recommendations",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 11: Key Takeaways & Recommendations",
+    "text": "Slide 11: Key Takeaways & Recommendations\nTop Data-Backed Discoveries\n\n\n\nComprehensive insurance products are the primary profitability risk drivers, exhibiting the highest loss ratios and widest variability, indicating greater exposure to severe and volatile claims.\nDriver age demonstrates a U-shaped risk pattern, where younger (18–25) and older (65+) drivers experience higher risk levels, while middle-aged drivers remain the most stable and profitable segment.\nUrban policies consistently generate higher loss ratios and claim frequencies than rural policies, suggesting that traffic density and driving environment significantly influence underwriting risk.\n\n\nRecommendations\n\nStrengthen Risk-Based Pricing: The insurer should apply more granular pricing adjustments for comprehensive policyholders, urban drivers, and high-risk age groups.\nDevelop targeted underwriting rules for high-risk customer segments.\nSince a small number of policies generate disproportionately large losses, the insurer should strengthen fraud detection and improve catastrophic claims monitoring."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-9-vehicle-age-loss-ratio-in-bubble-chart",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-9-vehicle-age-loss-ratio-in-bubble-chart",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 9: Vehicle Age & Loss Ratio in Bubble Chart",
+    "text": "Slide 9: Vehicle Age & Loss Ratio in Bubble Chart\n\n\n\n\nKey Findings\n\nNewer vehicles (0–2 years) exhibit the highest claim frequency, indicating that recently purchased vehicles are associated with more frequent claim activity, although their average loss ratios remain relatively stable.\nOlder vehicles (15+ years) show the lowest claim frequency and relatively low loss ratios, while also representing one of the largest policy segments, suggesting a stable and profitable customer group.\nVehicle age alone is not sufficient in explaining loss ratio."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-2-premium-distribution-is-right-skewed",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-2-premium-distribution-is-right-skewed",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 2: Premium Distribution is Right-Skewed",
+    "text": "Slide 2: Premium Distribution is Right-Skewed\n\n\n\n\nKey Findings\n\nDistribution is strongly right-skewed, most policyholders pay under €1,000\nLong right tail reflects policies covering high-value vehicles and comprehensive coverage"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-3-claim-distribution-is-right-skewed",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-3-claim-distribution-is-right-skewed",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 3: Claim Distribution is Right-Skewed",
+    "text": "Slide 3: Claim Distribution is Right-Skewed\n\nKey Findings\n\nMost policies record zero claims, the majority of incurred cost is driven by a minority\nLog-transformed distribution shows an approximately log-normal pattern"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-4-portfolio-profitability-profile-loss-ratio",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-4-portfolio-profitability-profile-loss-ratio",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 4: Portfolio Profitability Profile (Loss Ratio)",
+    "text": "Slide 4: Portfolio Profitability Profile (Loss Ratio)\n\n\nWhat is Loss Ratio (LR)? LR = Total Incurred / Total Premium\n\nLR &lt; 1: Profitable\nLR = 1: Break-even\nLR &gt; 1: Unprofitable\n\n\n\nKey Findings\n\nDistribution is bimodal: a massive spike at 0 and a long right-tail for claimants\nAfter 99th pct filtering, LR extends to ~12"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-6-risk-patterns-in-a-u-shape-curve-for-driver-age",
+    "href": "Take-home_Ex/Take-home_Ex01/presentation.html#slide-6-risk-patterns-in-a-u-shape-curve-for-driver-age",
+    "title": "Visual Analytics for Insurance Portfolio Data Discovery",
+    "section": "Slide 6: Risk Patterns in a U-shape curve for Driver Age",
+    "text": "Slide 6: Risk Patterns in a U-shape curve for Driver Age\n\n\n\n\nKey Findings\n\n18–25 yrs: Highest median LR, widest spread, elevated catastrophic claim risk\n26–45 yrs: Moderate LR, distribution narrows with experience\n46–65 yrs: Lowest median LR, most profitable driver segment\n65+ yrs: LR rises again, tail risk re-emerges"
   }
 ]

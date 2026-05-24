@@ -310,6 +310,7 @@ The premium distribution is heavily right-skewed. The majority of policies carry
 ```{r}
 #| label: vis2-incurred
 #| fig-cap: "Distribution of Total Incurred Claim Cost"
+#| fig-width: 10
 #| code-fold: true
 #| code-summary: "Show Code"
 
