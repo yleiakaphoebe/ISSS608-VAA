@@ -1,0 +1,26 @@
+---
+title: "TenantThread Embargo Breach: Forensic Communication Analysis"
+author: "Lei Yuhe"
+date: "May 31, 2026"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 3
+    number-sections: true
+execute:
+  eval: true
+  echo: true
+  freeze: true
+  warning: false
+  message: false
+---
+
+## Overview
+
+This exercises explores and resolves the [Mini Challenge 1](https://vast-challenge.github.io/2026/MC1.html) of [Vast Challenge 2026](https://ieeevis.org/year/2026/welcome/).
+
+On June 5, 2046, embargoed information about TenantThread's merger with CivicLoom Realty Partners appeared publicly on FleX, a social media platform, at approximately 5pm, one hour before the agreed 6pm announcement time. This report reconstructs the events and decision-making that led to the breach, using internal agent communications and deliberations from the two weeks preceding the release.
+
+
+
+
