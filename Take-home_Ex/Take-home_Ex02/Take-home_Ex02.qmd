@@ -17,9 +17,420 @@ execute:
 
 ## Overview
 
-This exercises explores and resolves the [Mini Challenge 1](https://vast-challenge.github.io/2026/MC1.html) of [Vast Challenge 2026](https://ieeevis.org/year/2026/welcome/).
+This exercises explores and resolves the [Mini Challenge 1](https://vast-challenge.github.io/2026/MC1.html) of the [Vast Challenge 2026](https://ieeevis.org/year/2026/welcome/).
 
 On June 5, 2046, embargoed information about TenantThread's merger with CivicLoom Realty Partners appeared publicly on FleX, a social media platform, at approximately 5pm, one hour before the agreed 6pm announcement time. This report reconstructs the events and decision-making that led to the breach, using internal agent communications and deliberations from the two weeks preceding the release.
+
+The question we are trying to figure out is:
+
+> **Did TenantThread's team deliberately leak the merger, or did the system simply break down under pressure?**
+
+## Getting Started
+
+### Loading Packages
+
+```{r}
+pacman::p_load(tidyverse, jsonlite, lubridate,
+  knitr, kableExtra, patchwork, scales, ggrepel
+)
+```
+### Loading and Parsing Data
+
+The dataset is a nested JSON structure with a single top-level key: `rounds`. Each element of `rounds` contains:
+
+- `hour`: the timestamp for the round
+- `environment_context`: external state (market, social media, events)
+- `communications`: all messages sent during that round, with internal agent states
+- `participants`: declared actions and metadata for each active agent
+
+```{r}
+raw <- jsonlite::fromJSON("data/MC1_final_00.json", simplifyVector = FALSE)
+rounds <- raw$rounds
+
+get_text <- function(x) {
+  if (is.null(x) || length(x) == 0) return(NA_character_)
+  return(as.character(x[[1]]))
+}
+
+cat("Total rounds:", length(rounds), "\n")
+cat("Date range:", get_text(rounds[[1]]$hour), "to", get_text(rounds[[length(rounds)]]$hour))
+```
+### Creating Tables - Round
+
+::: {.panel-tabset}
+
+#### Table Overview
+
+```{r}
+#| echo: false
+
+round_tbl <- map_dfr(seq_along(rounds), function(i) {
+  r <- rounds[[i]]
+  env <- r$environment_context
+  ms <- env$market_snapshot
+  t <- ymd_hms(get_text(r$hour))
+
+  tibble(
+    round_id = i,
+    hour = t,
+    stage = case_when(
+      t < ymd_hms("2046-06-05 00:00:00") ~ "Pre-crisis",
+      t < ymd_hms("2046-06-05 17:00:00") ~ "Crisis (pre-breach)",
+      t < ymd_hms("2046-06-05 18:00:00") ~ "Breach window",
+      TRUE ~ "Post-embargo"
+    ),
+    event_headline = get_text(env$event_headline),
+    stock_price = parse_number(get_text(ms$stock_price)),
+    pct_change = parse_number(get_text(ms$percent_change)),
+    market_sentiment = get_text(ms$sentiment),
+    n_comms = length(r$communications),
+    agents_unavailable = paste(unlist(env$agents_unavailable %||% list()), collapse = ", ")
+  )
+})
+
+DT::datatable(round_tbl, options = list(pageLength = 5),class = "nowrap")
+```
+
+#### Code
+
+**`round_tbl`**: capturing the external environment.
+
+```{r}
+#| eval: false
+
+round_tbl <- map_dfr(seq_along(rounds), function(i) {
+  r <- rounds[[i]]
+  env <- r$environment_context
+  ms <- env$market_snapshot
+  t <- ymd_hms(get_text(r$hour))
+
+  tibble(
+    round_id = i,
+    hour = t,
+    stage = case_when(
+      t < ymd_hms("2046-06-05 00:00:00") ~ "Pre-crisis",
+      t < ymd_hms("2046-06-05 17:00:00") ~ "Crisis (pre-breach)",
+      t < ymd_hms("2046-06-05 18:00:00") ~ "Breach window",
+      TRUE ~ "Post-embargo"
+    ),
+    event_headline = get_text(env$event_headline),
+    stock_price = parse_number(get_text(ms$stock_price)),
+    pct_change = parse_number(get_text(ms$percent_change)),
+    market_sentiment = get_text(ms$sentiment),
+    n_comms = length(r$communications),
+    agents_unavailable = paste(unlist(env$agents_unavailable %||% list()), collapse = ", ")
+  )
+})
+
+DT::datatable(round_tbl, options = list(pageLength = 5),class = "nowrap")
+```
+
+:::
+
+### Creating Tables - Communication
+
+::: {.panel-tabset}
+
+#### Table Overview 
+```{r}
+#| echo: false
+communication_tbl <- map_dfr(seq_along(rounds), function(i) {
+  r <- rounds[[i]]
+  env <- r$environment_context
+  round_time <- ymd_hms(get_text(r$hour))
+
+  map_dfr(r$communications, function(msg) {
+    ist <- msg$internal_state
+    t <- ymd_hms(get_text(msg$timestamp))
+    content_lc <- str_to_lower(get_text(msg$content))
+    channel_text <- get_text(msg$channel)
+
+    # creating a simple data frame, using function&package under tidyverse
+    tibble(
+      round_id = i,
+      hour = round_time,
+      timestamp = t,
+      stage = case_when(
+        t < ymd_hms("2046-06-05 00:00:00") ~ "Pre-crisis",
+        t < ymd_hms("2046-06-05 17:00:00") ~ "Crisis (pre-breach)",
+        t < ymd_hms("2046-06-05 18:00:00") ~ "Breach window",
+        TRUE ~ "Post-embargo"
+      ),
+      agent_id = get_text(msg$agent_id),
+      agent_role = get_text(msg$agent_role),
+      channel = channel_text,
+      content = get_text(msg$content),
+      deliberating = get_text(ist$deliberating),
+      reacting = get_text(ist$reacting),
+      rationalizing = get_text(ist$rationalizing),
+      # Keyword flags
+      deal_terms = str_detect(content_lc, "civicloom|harborcrest|residentedge|definitive merger|merger agreement"),
+      embargo_terms = str_detect(content_lc, "embargo|6:00|6pm|bilateral release|section 4\\.3"),
+      crisis_terms = str_detect(content_lc, "mac|covenant|termination|critical|saltwind"),
+      public_channel = channel_text %in% c("official_post", "personal_post", "anonymous_post"),
+      anon_channel = channel_text == "anonymous_post",
+      side_channel = channel_text == "side_huddle"
+    )
+  })
+})
+
+cat("Total messages:", nrow(communication_tbl))
+
+DT::datatable(communication_tbl, options = list(pageLength = 5), class = "nowrap")
+```
+
+
+#### Code 
+```{r}
+#| eval: false
+communication_tbl <- map_dfr(seq_along(rounds), function(i) {
+  r <- rounds[[i]]
+  env <- r$environment_context
+  round_time <- ymd_hms(get_text(r$hour))
+
+  map_dfr(r$communications, function(msg) {
+    ist <- msg$internal_state
+    t <- ymd_hms(get_text(msg$timestamp))
+    content_lc <- str_to_lower(get_text(msg$content))
+    channel_text <- get_text(msg$channel)
+
+    # creating a simple data frame, using function&package under tidyverse
+    tibble(
+      round_id = i,
+      hour = round_time,
+      timestamp = t,
+      stage = case_when(
+        t < ymd_hms("2046-06-05 00:00:00") ~ "Pre-crisis",
+        t < ymd_hms("2046-06-05 17:00:00") ~ "Crisis (pre-breach)",
+        t < ymd_hms("2046-06-05 18:00:00") ~ "Breach window",
+        TRUE ~ "Post-embargo"
+      ),
+      agent_id = get_text(msg$agent_id),
+      agent_role = get_text(msg$agent_role),
+      channel = channel_text,
+      content = get_text(msg$content),
+      deliberating = get_text(ist$deliberating),
+      reacting = get_text(ist$reacting),
+      rationalizing = get_text(ist$rationalizing),
+      # Keyword flags
+      deal_terms = str_detect(content_lc, "civicloom|harborcrest|residentedge|definitive merger|merger agreement"),
+      embargo_terms = str_detect(content_lc, "embargo|6:00|6pm|bilateral release|section 4\\.3"),
+      crisis_terms = str_detect(content_lc, "mac|covenant|termination|critical|saltwind"),
+      public_channel = channel_text %in% c("official_post", "personal_post", "anonymous_post"),
+      anon_channel = channel_text == "anonymous_post",
+      side_channel = channel_text == "side_huddle"
+    )
+  })
+})
+
+cat("Total messages:", nrow(communication_tbl))
+
+DT::datatable(communication_tbl, options = list(pageLength = 5), class = "nowrap")
+```
+:::
+
+
+### Creating Tables - Participant (agents)
+
+
+::: {.panel-tabset}
+
+#### Table Overview 
+
+```{r}
+#| echo: false
+participant_tbl <- map_dfr(seq_along(rounds), function(i) {
+  r <- rounds[[i]]
+  round_time <- ymd_hms(get_text(r$hour))
+
+  map_dfr(r$participants %||% list(), function(p) {
+    tibble(
+      round_id = i,
+      hour = round_time,
+      agent_id = get_text(p$agent_id),
+      declared_action = get_text(p$declared_action)
+    )
+  })
+})
+
+DT::datatable(participant_tbl, options = list(pageLength = 5),class = "nowrap")
+```
+
+
+#### Code
+
+```{r}
+#| eval: false
+participant_tbl <- map_dfr(seq_along(rounds), function(i) {
+  r <- rounds[[i]]
+  round_time <- ymd_hms(get_text(r$hour))
+
+  map_dfr(r$participants %||% list(), function(p) {
+    tibble(
+      round_id = i,
+      hour = round_time,
+      agent_id = get_text(p$agent_id),
+      declared_action = get_text(p$declared_action)
+    )
+  })
+})
+
+DT::datatable(participant_tbl, options = list(pageLength = 5),class = "nowrap")
+```
+:::
+
+### Defining the Visual Theme
+
+```{r}
+theme_forensic <- function() {
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.title = element_text(face = "bold", size = 13, margin = margin(b = 6)),
+      plot.subtitle = element_text(size = 10, color = "grey40", margin = margin(b = 10)),
+      plot.caption = element_text(size = 8, color = "grey55", hjust = 0),
+      axis.title = element_text(size = 10, color = "grey30"),
+      axis.text = element_text(size = 9,  color = "grey30"),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(color = "grey92"),
+      legend.position = "top",
+      legend.title = element_text(size = 9, face = "bold"),
+      legend.text = element_text(size = 8),
+      strip.text = element_text(size = 9, face = "bold")
+    )
+}
+
+# A minimal two-colour palette: dark for primary, mid-grey for secondary
+COL_PRIMARY <- "#2b2b2b"
+COL_SECONDARY <- "#888888"
+COL_ALERT <- "#c0392b"
+COL_STAGE <- c(
+  "Pre-crisis" = "#bbbbbb",
+  "Crisis (pre-breach)" = "#666666",
+  "Breach window" = "#c0392b",
+  "Post-embargo" = "#2b6cb0"
+)
+```
+
+---
+
+## Task 1. Key Events and Relationships Leading to the Release
+
+### Background
+
+TenantThread actually operated under a dual crisis:
+
+1. SaltWind Journal's ongoing media report on algorithmic tenant scoring, with the hashtag `#AlgorithmicEviction` gaining traction. Internal documentation showed that the company's "anonymized" data could be reverse-engineered to identify individual tenants at smaller properties.
+
+2. A confidential merger agreement with CivicLoom Realty Partners, named "Project HarborCrest", under strict information embargo until 6PM on 5th June. However, the embargo was broken 1 hour before the agreed release time. CivicLoom could walk away if TenantThread's market sentiment or stock price deteriorated sufficiently.
+
+These two crises were not independent. The scandal directly threatened the conditions under which the merger could close.
+
+### Key Events
+```{r}
+derive_events <- function(communication_tbl, round_tbl) {
+
+  keywords <- c("civicloom", "harborcrest", "embargo",
+                "anonymous", "saltwind", "bilateral", "#AlgorithmicEviction")
+
+  bind_rows(
+    
+    communication_tbl %>%
+      filter(
+        public_channel | anon_channel | side_channel, 
+        deal_terms | embargo_terms | crisis_terms,
+        hour < ymd_hms("2046-06-05 18:00:00")
+      ) %>%
+      slice_min(hour, n = 1, with_ties = FALSE) %>%
+      transmute(
+        hour,
+        label = paste0("BREACH:\n", agent_id, "\n(", channel, ")"),
+        category = "breach"
+      ), 
+      
+    communication_tbl %>%
+      group_by(channel) %>%
+      slice_min(hour, n = 1, with_ties = FALSE) %>%
+      ungroup() %>%
+      transmute(
+        hour,
+        label = paste0(channel, "\nfirst used"), # First appearance of each channel
+        category = "channel"
+      ),
+
+    communication_tbl %>%
+      mutate(
+        kw = str_extract(str_to_lower(content),
+                         paste(keywords, collapse = "|"))
+      ) %>%
+      filter(!is.na(kw)) %>%
+      group_by(kw) %>%
+      slice_min(hour, n = 1, with_ties = FALSE) %>%
+      ungroup() %>%
+      transmute(
+        hour,
+        label = paste0(str_to_title(kw), "\nfirst mentioned"), # First mention of keyword
+        category = "keyword"
+      ),
+
+    round_tbl %>%
+      filter(agents_unavailable != "") %>%
+      transmute(
+        hour,
+        label = paste0("Absent:\n", agents_unavailable), # when agents were absent
+        category = "oversight"
+      ),
+
+    round_tbl %>%
+      mutate(vol_z = as.numeric(scale(n_comms))) %>%
+      filter(vol_z > 1.5) %>%
+      transmute(
+        hour,
+        label = paste0("Volume spike\n(z = ", round(vol_z, 1), ")"),
+        category = "volume"
+      )
+
+  ) %>%
+    arrange(hour) %>%
+    distinct(hour, label, .keep_all = TRUE)
+}
+
+```
+
+
+
+
+```{r}
+events_auto <- derive_events(communication_tbl, round_tbl)
+
+# Label the key events 
+events_labelled <- events_auto %>%
+  mutate(
+    severity = case_when(
+      category == "breach" ~ 6,
+      category == "oversight" ~ 5,
+      category == "keyword" ~ 4,
+      category == "channel" ~ 3,
+      category == "volume" ~ 2,
+      TRUE ~ 1
+    ),
+    event_type = category  # or recode to friendlier names
+  )
+
+ggplot(events_labelled, aes(x = hour, y = severity, colour = event_type)) +
+  geom_point(size = 3) +
+  geom_text_repel(aes(label = label), size = 3, show.legend = FALSE) +
+  scale_x_datetime(date_labels = "%d %b") +
+  scale_y_continuous(breaks = 1:5, limits = c(1, 5.5)) +
+  labs(title = "Event sequence and severity", x = NULL, y = "Severity",
+       colour = "Event type") +
+  theme_forensic()
+
+```
+
+
+
+
+
 
 
 
