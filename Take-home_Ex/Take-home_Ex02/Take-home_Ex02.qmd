@@ -34,14 +34,15 @@ pacman::p_load(tidyverse, jsonlite, lubridate,
   knitr, kableExtra, patchwork, scales, ggrepel
 )
 ```
+
 ### Loading and Parsing Data
 
 The dataset is a nested JSON structure with a single top-level key: `rounds`. Each element of `rounds` contains:
 
-- `hour`: the timestamp for the round
-- `environment_context`: external state (market, social media, events)
-- `communications`: all messages sent during that round, with internal agent states
-- `participants`: declared actions and metadata for each active agent
+-   `hour`: the timestamp for the round
+-   `environment_context`: external state (market, social media, events)
+-   `communications`: all messages sent during that round, with internal agent states
+-   `participants`: declared actions and metadata for each active agent
 
 ```{r}
 raw <- jsonlite::fromJSON("data/MC1_final_00.json", simplifyVector = FALSE)
@@ -55,10 +56,10 @@ get_text <- function(x) {
 cat("Total rounds:", length(rounds), "\n")
 cat("Date range:", get_text(rounds[[1]]$hour), "to", get_text(rounds[[length(rounds)]]$hour))
 ```
+
 ### Creating Tables - Round
 
-::: {.panel-tabset}
-
+::: panel-tabset
 #### Table Overview
 
 ```{r}
@@ -124,14 +125,13 @@ round_tbl <- map_dfr(seq_along(rounds), function(i) {
 
 DT::datatable(round_tbl, options = list(pageLength = 5),class = "nowrap")
 ```
-
 :::
 
 ### Creating Tables - Communication
 
-::: {.panel-tabset}
+::: panel-tabset
+#### Table Overview
 
-#### Table Overview 
 ```{r}
 #| echo: false
 communication_tbl <- map_dfr(seq_along(rounds), function(i) {
@@ -179,8 +179,8 @@ cat("Total messages:", nrow(communication_tbl))
 DT::datatable(communication_tbl, options = list(pageLength = 5), class = "nowrap")
 ```
 
+#### Code
 
-#### Code 
 ```{r}
 #| eval: false
 communication_tbl <- map_dfr(seq_along(rounds), function(i) {
@@ -229,13 +229,10 @@ DT::datatable(communication_tbl, options = list(pageLength = 5), class = "nowrap
 ```
 :::
 
-
 ### Creating Tables - Participant (agents)
 
-
-::: {.panel-tabset}
-
-#### Table Overview 
+::: panel-tabset
+#### Table Overview
 
 ```{r}
 #| echo: false
@@ -255,7 +252,6 @@ participant_tbl <- map_dfr(seq_along(rounds), function(i) {
 
 DT::datatable(participant_tbl, options = list(pageLength = 5),class = "nowrap")
 ```
-
 
 #### Code
 
@@ -311,7 +307,7 @@ COL_STAGE <- c(
 )
 ```
 
----
+------------------------------------------------------------------------
 
 ## Task 1. Key Events and Relationships Leading to the Release
 
@@ -319,14 +315,21 @@ COL_STAGE <- c(
 
 TenantThread actually operated under a dual crisis:
 
-1. SaltWind Journal's ongoing media report on algorithmic tenant scoring, with the hashtag `#AlgorithmicEviction` gaining traction. Internal documentation showed that the company's "anonymized" data could be reverse-engineered to identify individual tenants at smaller properties.
+1.  SaltWind Journal's ongoing media report on algorithmic tenant scoring, with the hashtag `#AlgorithmicEviction` gaining traction. Internal documentation showed that the company's "anonymized" data could be reverse-engineered to identify individual tenants at smaller properties.
 
-2. A confidential merger agreement with CivicLoom Realty Partners, named "Project HarborCrest", under strict information embargo until 6PM on 5th June. However, the embargo was broken 1 hour before the agreed release time. CivicLoom could walk away if TenantThread's market sentiment or stock price deteriorated sufficiently.
+2.  A confidential merger agreement with CivicLoom Realty Partners, named "Project HarborCrest", under strict information embargo until 6PM on 5th June. However, the embargo was broken 1 hour before the agreed release time. CivicLoom could walk away if TenantThread's market sentiment or stock price deteriorated sufficiently.
 
 These two crises were not independent. The scandal directly threatened the conditions under which the merger could close.
 
 ### Key Events
+
+The key events are categorized into four types, which are breach, channel, keyword and oversight. This way of structuring the key events can distinguish between infrastructure emergency (when new channel is opened), communication pitfalls (e.g. sensitive keywords involved) and governance failure (where agents are unavailable). Severity scores was defined to reflect the risk weight of each event.
+
+#### Derive Key Events
+
 ```{r}
+#| code-fold: true
+
 derive_events <- function(communication_tbl, round_tbl) {
 
   keywords <- c("civicloom", "harborcrest", "embargo",
@@ -396,10 +399,12 @@ derive_events <- function(communication_tbl, round_tbl) {
 
 ```
 
-
-
+::: panel-tabset
+#### Key Events
 
 ```{r}
+#| echo: false
+
 events_auto <- derive_events(communication_tbl, round_tbl)
 
 # Label the key events 
@@ -427,9 +432,210 @@ ggplot(events_labelled, aes(x = hour, y = severity, colour = event_type)) +
 
 ```
 
+#### Key Events - Code
 
+```{r}
+#| eval: false
 
+events_auto <- derive_events(communication_tbl, round_tbl)
 
+# Label the key events 
+events_labelled <- events_auto %>%
+  mutate(
+    severity = case_when(
+      category == "breach" ~ 6,
+      category == "oversight" ~ 5,
+      category == "keyword" ~ 4,
+      category == "channel" ~ 3,
+      category == "volume" ~ 2,
+      TRUE ~ 1
+    ),
+    event_type = category  # or recode to friendlier names
+  )
+
+ggplot(events_labelled, aes(x = hour, y = severity, colour = event_type)) +
+  geom_point(size = 3) +
+  geom_text_repel(aes(label = label), size = 3, show.legend = FALSE) +
+  scale_x_datetime(date_labels = "%d %b") +
+  scale_y_continuous(breaks = 1:5, limits = c(1, 5.5)) +
+  labs(title = "Event sequence and severity", x = NULL, y = "Severity",
+       colour = "Event type") +
+  theme_forensic()
+
+```
+:::
+
+The chart reveals a clear escalation where early events are dominated by channel-relevant activities, indicating new communication pathways being established at moderate risk. Until late May, keywords appear consistently, showing that sensitive topics begin surfacing across those channels. The most critical shift occurs in early June, where the absence of key supervisory agents (Legal, Judge, PR) were detected. This is precisely when activity is most complex. The visual acceleration from left to right, indicates that the risk has been compounding over time.
+
+### Causal Relationship View
+
+The table below lists the seven key decision points from the first off-record side-huddle to the 5:00 PM breach.
+
+```{r}
+causal_chain <- tribble(
+  ~When, ~Agent, ~Event,
+  "May 22", "quality_agent", "First side-huddle, explicitly 'off the War Room record'",
+  "May 23", "legal_agent", "Infers embargo from CEO language, interns excluded",
+  "May 29", "pr_agent", "Personal posting & embargo",
+  "May 30", "judge_agent", "Judge installed with no knowledge of prior side-huddles",
+  "Jun 5, 1 PM", "legal + judge + pr", "All three oversight agents simultaneously absent",
+  "Jun 5, 3 PM", "judge_agent", "Issues hard ceiling, 'no forward-looking language from ANY account'",
+  "Jun 5, 5 PM", "legal_agent, social_media_agent", "BREACH: CivicLoom and HarborCrest named publicly on FleX"
+)
+
+causal_chain %>%
+  knitr::kable(
+    col.names = c("When", "Agent", "Event"),
+    caption   = "Causal chain to the embargo breach"
+  )
+```
+
+### The 5:00 PM Release Sequence
+
+The chart below shows all public posts in the breach window, coloured by whether they contained embargoed deal terms.
+
+```{r}
+communication_tbl %>%
+  filter(
+    public_channel,
+    hour >= ymd_hms("2046-06-05 16:00:00"),
+    hour <= ymd_hms("2046-06-05 18:00:00")
+  ) %>%
+  mutate(
+    contains_deal = deal_terms | embargo_terms,
+    channel = recode(channel,
+      "anonymous_post" = "Anonymous",
+      "personal_post" = "Personal",
+      "official_post" = "Official"
+    )
+  ) %>%
+  ggplot(aes(x = timestamp, y = agent_role, colour = contains_deal, shape = channel)) +
+  geom_point(size = 4) +
+  geom_vline(xintercept = ymd_hms("2046-06-05 17:00:00"),
+             linetype = "dashed", colour = "red") +
+  annotate("text", x = ymd_hms("2046-06-05 17:02:00"), y = 0.6,
+           label = "Breach 5 PM", colour = "red", size = 3, hjust = 0) +
+  scale_colour_manual(values = c("FALSE" = "grey70", "TRUE" = "red"),
+                      labels = c("FALSE" = "Routine", "TRUE" = "Deal/embargo terms"),
+                      name = "Content") +
+  scale_x_datetime(date_labels = "%H:%M") +
+  labs(title = "Public posts in the breach window (4-6 PM, Jun 5)",
+       subtitle = "Red points contain embargoed merger terms.",
+       x = NULL, y = NULL, shape = "Channel") +
+  theme_forensic()
+```
+
+### Task 1 Answer
+
+The breach was not a spontaneous accident. It followed a causal chain beginning on 22 May.
+
+Key enablers: 
+1. senior agents coordinating in side-huddles that excluded the Judge
+
+2.  a 1:00 PM oversight gap where Legal, Judge, and PR were simultaneously absent
+
+3.  the Judge's 3:00 PM hard ceiling warning being disregarded two hours later. The agents who posted at 5:00 PM had held full embargo awareness since May 23.
+
+------------------------------------------------------------------------
+
+## Task 2. Typical Behaviour vs Release Behaviour
+
+### Message Volume and Channel Shift
+
+The chart below compares the share of messages per channel across the three stages. Side-huddle and anonymous post channels were near-zero before crisis day.
+
+```{r}
+communication_tbl %>%
+  filter(stage != "Post-embargo") %>%
+  mutate(stage = factor(stage,
+    levels = c("Pre-crisis", "Crisis (pre-breach)", "Breach window"))) %>%
+  count(stage, channel) %>%
+  group_by(stage) %>%
+  mutate(share = n / sum(n)) %>%
+  ungroup() %>%
+  ggplot(aes(x = share, y = reorder(channel, share), fill = stage)) +
+  geom_col(position = "dodge") +
+  scale_x_continuous(labels = percent_format(accuracy = 1)) +
+  scale_fill_manual(
+    values = c("Pre-crisis" = "#bbbbbb",
+               "Crisis (pre-breach)" = "#666666",
+               "Breach window" = "#c0392b"),
+    name = NULL
+  ) +
+  labs(title = "Channel share by stage",
+       subtitle = "Side-huddle and anonymous channels spike in breach window.",
+       x = "Share of messages", y = NULL) +
+  theme_forensic()
+```
+
+### Agent–Channel Heatmap
+
+```{r}
+communication_tbl %>%
+  mutate(period = if_else(stage == "Pre-crisis",
+                          "Pre-crisis", "Crisis day")) %>%
+  count(period, agent_id, channel) %>%
+  complete(period, agent_id, channel, fill = list(n = 0)) %>%
+  ggplot(aes(x = channel, y = fct_rev(agent_id), fill = n)) +
+  geom_tile(colour = "white", linewidth = 0.4) +
+  geom_text(aes(label = ifelse(n > 0, n, "")),
+            size = 2.8, colour = "white") +
+  facet_wrap(~ period) +
+  scale_fill_gradient(low = "#eeeeee", high = "#2b2b2b", name = "Count") +
+  scale_x_discrete(labels = function(x) str_replace_all(x, "_", "\n")) +
+  labs(title = "Agent–channel message counts",
+       subtitle = "legal_agent and quality_agent use anonymous/personal channels only on crisis day.",
+       x = NULL, y = NULL) +
+  theme_forensic() +
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(size = 8))
+```
+
+### Sensitive Language Shift
+
+```{r}
+communication_tbl %>%
+  group_by(hour, stage) %>%
+  summarise(
+    deal = mean(deal_terms, na.rm = TRUE),
+    embargo = mean(embargo_terms, na.rm = TRUE),
+    crisis = mean(crisis_terms, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(cols = c(deal, embargo, crisis),
+               names_to = "keyword", values_to = "share") %>%
+  mutate(keyword = recode(keyword,
+    "deal" = "Deal terms",
+    "embargo" = "Embargo terms",
+    "crisis" = "Crisis terms"
+  )) %>%
+  ggplot(aes(x = hour, y = share, colour = keyword)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 1.8) +
+  geom_vline(xintercept = ymd_hms("2046-06-05 17:00:00"),
+             linetype = "dashed", colour = "red") +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_x_datetime(date_labels = "%d %b", date_breaks = "5 days") +
+  scale_colour_manual(
+    values = c("Deal terms" = "#2b2b2b",
+               "Embargo terms" = "#888888",
+               "Crisis terms" = "#444444"),
+    name = NULL
+  ) +
+  labs(title = "Sensitive keyword share per round",
+       subtitle = "Deal terms absent pre-crisis, all three spike in breach window.",
+       x = NULL, y = "Share of messages",
+       caption = "Dashed line = 5PM breach.") +
+  theme_forensic()
+```
+
+### Task 2 Answer
+
+Three clear shifts distinguish crisis-day behaviour from the two-week baseline. 
+
+1. The side-huddle share of messages rose from near-zero to 25%, with the Judge structurally excluded. 
+2. legal_agent used the anonymous channel 12 times, which is a channel unused in all 13 pre-crisis rounds 
+3. quality_agent posted publicly for the first time ever. These are not the patterns of a confused system. They are agents deliberately switching communication modes.
 
 
 
